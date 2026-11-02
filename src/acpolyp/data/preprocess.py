@@ -17,11 +17,11 @@ import numpy as np
 
 @dataclass
 class Canon:
-    image: np.ndarray        # (S, S, 3) uint8 RGB, FOV-cropped
-    fov: np.ndarray          # (S, S) uint8 {0,1}: valid pixels = inside the endoscopic FOV and not masked
+    image: np.ndarray  # (S, S, 3) uint8 RGB, FOV-cropped
+    fov: np.ndarray  # (S, S) uint8 {0,1}: valid pixels = inside the endoscopic FOV and not masked
     bbox: tuple[int, int, int, int]  # x0, y0, x1, y1 in original pixels
-    teal_frac: float         # fraction of the original frame covered by the ScopeGuide box
-    fov_frac: float          # FOV area / original frame area
+    teal_frac: float  # fraction of the original frame covered by the ScopeGuide box
+    fov_frac: float  # FOV area / original frame area
     orig_hw: tuple[int, int]
 
 
@@ -29,11 +29,13 @@ def fov_mask(rgb: np.ndarray, thr: int = 18) -> np.ndarray:
     """Binary mask of the endoscopic field of view: largest bright blob, holes filled, convex."""
     h, w = rgb.shape[:2]
     scale = 256.0 / max(h, w)
-    small = cv2.resize(rgb, (max(1, int(w * scale)), max(1, int(h * scale))), interpolation=cv2.INTER_AREA)
+    small = cv2.resize(
+        rgb, (max(1, int(w * scale)), max(1, int(h * scale))), interpolation=cv2.INTER_AREA
+    )
     gray = cv2.cvtColor(small, cv2.COLOR_RGB2GRAY)
     m = (gray > thr).astype(np.uint8)
     k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
-    m = cv2.morphologyEx(m, cv2.MORPH_OPEN, k)        # strips text strokes and thin lines
+    m = cv2.morphologyEx(m, cv2.MORPH_OPEN, k)  # strips text strokes and thin lines
     n, lab, stats, _ = cv2.connectedComponentsWithStats(m, connectivity=8)
     if n <= 1:
         return np.ones((h, w), np.uint8)
@@ -67,7 +69,7 @@ def teal_mask(rgb: np.ndarray) -> np.ndarray:
         x, y, bw, bh, area = stats[i]
         cx, cy = cent[i]
         # the box is a large, filled rectangle in the lower-left of the frame
-        if (area > 0.01 * h * w and area / float(bw * bh) > 0.8 and cx < 0.45 * w and cy > 0.5 * h):
+        if area > 0.01 * h * w and area / float(bw * bh) > 0.8 and cx < 0.45 * w and cy > 0.5 * h:
             out[lab == i] = 1
     return cv2.dilate(out, cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9)))
 
@@ -112,7 +114,9 @@ def canonicalise(rgb: np.ndarray, size: int = 256) -> Canon:
     )
 
 
-def crop_resize_mask(mask: np.ndarray, bbox: tuple[int, int, int, int], size: int = 256) -> np.ndarray:
+def crop_resize_mask(
+    mask: np.ndarray, bbox: tuple[int, int, int, int], size: int = 256
+) -> np.ndarray:
     """Apply the FOV crop used by `canonicalise` to a ground-truth mask (nearest-neighbour)."""
     x0, y0, x1, y1 = bbox
     return cv2.resize(mask[y0:y1, x0:x1], (size, size), interpolation=cv2.INTER_NEAREST)

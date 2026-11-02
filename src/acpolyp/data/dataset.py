@@ -19,8 +19,16 @@ from torch.utils.data import DataLoader, Dataset
 from ..ac.features import family_of
 from ..paths import INTERIM, PROCESSED
 
-MASK_FILES = {"ac": "ac_masks.npy", "ellipse": "ac_masks_ellipse.npy", "shuffle": "ac_masks_shuffle.npy"}
-FEAT_FILES = {"ac": "ac_features.parquet", "ellipse": "ac_features_ellipse.parquet", "shuffle": "ac_features_shuffle.parquet"}
+MASK_FILES = {
+    "ac": "ac_masks.npy",
+    "ellipse": "ac_masks_ellipse.npy",
+    "shuffle": "ac_masks_shuffle.npy",
+}
+FEAT_FILES = {
+    "ac": "ac_features.parquet",
+    "ellipse": "ac_features_ellipse.parquet",
+    "shuffle": "ac_features_shuffle.parquet",
+}
 
 
 def feature_columns(df: pd.DataFrame, families: list[str]) -> list[str]:
@@ -62,17 +70,26 @@ def clean_cache(name: str, src: str) -> str:
 class KvasirData:
     """Everything split-independent, loaded once and shared by the train/val/test Dataset views."""
 
-    def __init__(self, image_key: str = "canon", mask_source: str = "ac", feat_families: list[str] | None = None,
-                 split_col: str = "split"):
+    def __init__(
+        self,
+        image_key: str = "canon",
+        mask_source: str = "ac",
+        feat_families: list[str] | None = None,
+        split_col: str = "split",
+    ):
         self.meta = pd.read_parquet(PROCESSED / "metadata_clean.parquet")
-        self.images = LazyNpy(clean_cache(f"images_{image_key}", f"images_{image_key}.npy"))  # (N,256,256,3) uint8
+        self.images = LazyNpy(
+            clean_cache(f"images_{image_key}", f"images_{image_key}.npy")
+        )  # (N,256,256,3) uint8
         self.valid = LazyNpy(clean_cache("fov", "fov.npy"))
         self.masks = LazyNpy(PROCESSED / MASK_FILES[mask_source])  # (N,128,128)
         self.labels = self.meta["label"].to_numpy().astype(np.int64)
         self.feats = None
         if feat_families:
             df = pd.read_parquet(PROCESSED / FEAT_FILES[mask_source])
-            gdf = pd.read_parquet(PROCESSED / FEAT_FILES["ac"])  # global features never depend on the mask
+            gdf = pd.read_parquet(
+                PROCESSED / FEAT_FILES["ac"]
+            )  # global features never depend on the mask
             cols = feature_columns(df, [f for f in feat_families if f != "global"])
             f = df[cols].to_numpy(np.float32) if cols else np.zeros((len(df), 0), np.float32)
             if "global" in feat_families:
@@ -80,7 +97,9 @@ class KvasirData:
                 f = np.concatenate([f, gdf[gcols].to_numpy(np.float32)], axis=1)
             self.feats = f
             self.feat_names = cols + (gcols if "global" in feat_families else [])
-        self.split = self.meta[split_col].to_numpy()  # 'split' = grouped; 'split_random' = naive leaky control
+        self.split = self.meta[
+            split_col
+        ].to_numpy()  # 'split' = grouped; 'split_random' = naive leaky control
 
     def idx(self, split: str, frac: float = 1.0) -> np.ndarray:
         """Row indices of a split; frac < 1 draws a fixed class-stratified subset (learning-curve study)."""
@@ -88,7 +107,12 @@ class KvasirData:
         if frac >= 1.0:
             return rows
         rng = np.random.default_rng(1234)  # the subset is identical for every model and seed
-        keep = [rng.permutation(rows[self.labels[rows] == k])[: max(1, round(frac * (self.labels[rows] == k).sum()))] for k in np.unique(self.labels[rows])]
+        keep = [
+            rng.permutation(rows[self.labels[rows] == k])[
+                : max(1, round(frac * (self.labels[rows] == k).sum()))
+            ]
+            for k in np.unique(self.labels[rows])
+        ]
         return np.sort(np.concatenate(keep))
 
     def fit_scaler(self) -> tuple[np.ndarray, np.ndarray] | None:
@@ -123,7 +147,9 @@ class KvasirSplit(Dataset):
         out = {"image": img, "mask": mask, "valid": valid, "label": torch.tensor(d.labels[r])}
         if d.feats is not None:
             mu, sd, lo, hi = self.scaler
-            out["feats"] = torch.from_numpy(((np.clip(d.feats[r], lo, hi) - mu) / sd).astype(np.float32))
+            out["feats"] = torch.from_numpy(
+                ((np.clip(d.feats[r], lo, hi) - mu) / sd).astype(np.float32)
+            )
         return out
 
 
@@ -131,10 +157,20 @@ def collate(batch: list[dict[str, torch.Tensor]]) -> dict[str, torch.Tensor]:
     return {k: torch.stack([b[k] for b in batch]) for k in batch[0]}
 
 
-def make_loader(ds: Dataset, batch_size: int, shuffle: bool, seed: int, pin: bool = True) -> DataLoader:
+def make_loader(
+    ds: Dataset, batch_size: int, shuffle: bool, seed: int, pin: bool = True
+) -> DataLoader:
     """In-process loader (num_workers=0): indexing a memory-mapped uint8 cache is cheap, and worker processes
     cost ~2.4 GB of commit memory each on Windows (observed to exhaust the commit limit)."""
     g = torch.Generator()
     g.manual_seed(seed)
-    return DataLoader(ds, batch_size=batch_size, shuffle=shuffle, num_workers=0, collate_fn=collate,
-                      pin_memory=pin, drop_last=shuffle, generator=g)
+    return DataLoader(
+        ds,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=0,
+        collate_fn=collate,
+        pin_memory=pin,
+        drop_last=shuffle,
+        generator=g,
+    )

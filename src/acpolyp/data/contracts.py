@@ -18,7 +18,13 @@ CLASSES = [
 CLASS_TO_IDX = {c: i for i, c in enumerate(CLASSES)}
 POLYP_IDX = CLASS_TO_IDX["polyps"]
 # Classes that show a polyp or polyp-related procedure: the clinically hard negatives for 'polyps'.
-COLON_CLASSES = ["normal-cecum", "polyps", "ulcerative-colitis", "dyed-lifted-polyps", "dyed-resection-margins"]
+COLON_CLASSES = [
+    "normal-cecum",
+    "polyps",
+    "ulcerative-colitis",
+    "dyed-lifted-polyps",
+    "dyed-resection-margins",
+]
 
 
 class ImageRecord(BaseModel):

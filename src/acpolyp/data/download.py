@@ -86,7 +86,11 @@ def main() -> None:
         path = download(name)
         digest = sha256_file(path)
         n = safe_extract(path, spec["extract_to"])
-        imgs = sum(1 for p in spec["extract_to"].rglob("*") if p.suffix.lower() in {".jpg", ".jpeg", ".png"})
+        imgs = sum(
+            1
+            for p in spec["extract_to"].rglob("*")
+            if p.suffix.lower() in {".jpg", ".jpeg", ".png"}
+        )
         manifest[name] = {
             "file": path.name,
             "bytes": path.stat().st_size,
@@ -98,7 +102,9 @@ def main() -> None:
         }
         print(name, manifest[name])
         if name == "kvasir-v2":
-            assert imgs == spec["expected_images"], f"expected {spec['expected_images']} images, found {imgs}"
+            assert imgs == spec["expected_images"], (
+                f"expected {spec['expected_images']} images, found {imgs}"
+            )
     ensure(RAW)
     (RAW / "MANIFEST.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 

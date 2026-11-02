@@ -35,27 +35,42 @@ def eval_transform(img: torch.Tensor, mask: torch.Tensor, valid: torch.Tensor, o
     return _norm(x) * v, m, v
 
 
-def color_jitter(x: torch.Tensor, gen: torch.Generator, b: float = 0.25, c: float = 0.25, s: float = 0.2) -> torch.Tensor:
+def color_jitter(
+    x: torch.Tensor, gen: torch.Generator, b: float = 0.25, c: float = 0.25, s: float = 0.2
+) -> torch.Tensor:
     """Per-sample brightness / contrast / saturation jitter on a [0,1] image batch."""
     B = x.shape[0]
     u = lambda w: 1.0 + (torch.rand(B, 1, 1, 1, device=x.device, generator=gen) * 2 - 1) * w
     x = x * u(b)
     mean = x.mean((1, 2, 3), keepdim=True)
     x = (x - mean) * u(c) + mean
-    gray = (0.299 * x[:, 0:1] + 0.587 * x[:, 1:2] + 0.114 * x[:, 2:3])
+    gray = 0.299 * x[:, 0:1] + 0.587 * x[:, 1:2] + 0.114 * x[:, 2:3]
     x = (x - gray) * u(s) + gray
     return x.clamp(0, 1)
 
 
-def train_transform(img: torch.Tensor, mask: torch.Tensor, valid: torch.Tensor, gen: torch.Generator, out: int = 224,
-                    scale: tuple[float, float] = (0.55, 1.0), ratio: tuple[float, float] = (0.9, 1.1)):
+def train_transform(
+    img: torch.Tensor,
+    mask: torch.Tensor,
+    valid: torch.Tensor,
+    gen: torch.Generator,
+    out: int = 224,
+    scale: tuple[float, float] = (0.55, 1.0),
+    ratio: tuple[float, float] = (0.9, 1.1),
+):
     B, dev = img.shape[0], img.device
     r = lambda *shape: torch.rand(*shape, device=dev, generator=gen)
     area = scale[0] + (scale[1] - scale[0]) * r(B)
     logr = math.log(ratio[0]) + (math.log(ratio[1]) - math.log(ratio[0])) * r(B)
     asp = torch.exp(logr)
-    w, h = torch.sqrt(area * asp).clamp(max=1.0), torch.sqrt(area / asp).clamp(max=1.0)  # crop size as image fraction
-    tx, ty = (r(B) * 2 - 1) * (1 - w), (r(B) * 2 - 1) * (1 - h)                             # centre offsets keep the crop inside
+    w, h = (
+        torch.sqrt(area * asp).clamp(max=1.0),
+        torch.sqrt(area / asp).clamp(max=1.0),
+    )  # crop size as image fraction
+    tx, ty = (
+        (r(B) * 2 - 1) * (1 - w),
+        (r(B) * 2 - 1) * (1 - h),
+    )  # centre offsets keep the crop inside
     ang = (r(B) * 2 - 1) * math.pi
     fx = torch.where(r(B) < 0.5, -1.0, 1.0).to(dev)
     fy = torch.where(r(B) < 0.5, -1.0, 1.0).to(dev)
@@ -68,8 +83,12 @@ def train_transform(img: torch.Tensor, mask: torch.Tensor, valid: torch.Tensor, 
     theta[:, 1, 1] = h * cos * fy
     theta[:, 0, 2], theta[:, 1, 2] = tx, ty
     grid = F.affine_grid(theta, (B, 3, out, out), align_corners=False)
-    x = F.grid_sample(img.float() / 255.0, grid, mode="bilinear", padding_mode="zeros", align_corners=False)
+    x = F.grid_sample(
+        img.float() / 255.0, grid, mode="bilinear", padding_mode="zeros", align_corners=False
+    )
     m = F.grid_sample(mask.float(), grid, mode="nearest", padding_mode="zeros", align_corners=False)
-    v = F.grid_sample(valid.float(), grid, mode="nearest", padding_mode="zeros", align_corners=False)
+    v = F.grid_sample(
+        valid.float(), grid, mode="nearest", padding_mode="zeros", align_corners=False
+    )
     x = color_jitter(x, gen)
     return _norm(x) * v, m, v

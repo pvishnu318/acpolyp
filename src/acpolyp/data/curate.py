@@ -50,7 +50,11 @@ def find_duplicates(df: pd.DataFrame, emb: np.ndarray, dup_cos: float) -> tuple[
             n_cross += 1
         elif not drop[i]:
             drop[j] = True
-    rep = {"duplicate_pairs": int(len(ii)), "cross_class_pairs": n_cross, "rows_dropped": int(drop.sum())}
+    rep = {
+        "duplicate_pairs": int(len(ii)),
+        "cross_class_pairs": n_cross,
+        "rows_dropped": int(drop.sum()),
+    }
     return drop, rep
 
 
@@ -61,7 +65,9 @@ def scene_groups(emb: np.ndarray, group_cos: float) -> np.ndarray:
     return g
 
 
-def label_issues(emb: np.ndarray, y: np.ndarray, groups: np.ndarray, seed: int) -> tuple[np.ndarray, np.ndarray]:
+def label_issues(
+    emb: np.ndarray, y: np.ndarray, groups: np.ndarray, seed: int
+) -> tuple[np.ndarray, np.ndarray]:
     """cleanlab confident-learning flags from grouped out-of-fold logistic-regression probabilities."""
     from cleanlab.filter import find_label_issues
 
@@ -74,7 +80,9 @@ def label_issues(emb: np.ndarray, y: np.ndarray, groups: np.ndarray, seed: int) 
     return issues, oof
 
 
-def make_splits(y: np.ndarray, groups: np.ndarray, test_frac: float, val_frac: float, seed: int) -> pd.DataFrame:
+def make_splits(
+    y: np.ndarray, groups: np.ndarray, test_frac: float, val_frac: float, seed: int
+) -> pd.DataFrame:
     n = len(y)
     idx = np.arange(n)
     k_test = round(1 / test_frac)
@@ -98,7 +106,9 @@ def make_splits(y: np.ndarray, groups: np.ndarray, test_frac: float, val_frac: f
     rng_split[trv_r[tr_r]] = "train"
     # 5-fold grouped CV over train+val for classical models (step 34)
     fold = -np.ones(n, int)
-    for f, (_, hold) in enumerate(StratifiedGroupKFold(5, shuffle=True, random_state=seed + 2).split(trv, y[trv], groups[trv])):
+    for f, (_, hold) in enumerate(
+        StratifiedGroupKFold(5, shuffle=True, random_state=seed + 2).split(trv, y[trv], groups[trv])
+    ):
         fold[trv[hold]] = f
     return pd.DataFrame({"split": split, "split_random": rng_split, "cv_fold": fold})
 
@@ -110,7 +120,9 @@ def leakage_audit(df: pd.DataFrame, emb: np.ndarray, split_col: str) -> dict:
     va = (df[split_col] == "val").to_numpy()
     out = {}
     for name, a, b in (("train_test", tr, te), ("train_val", tr, va), ("val_test", va, te)):
-        out[f"group_overlap_{name}"] = int(len(set(df.loc[a, "group_id"]) & set(df.loc[b, "group_id"])))
+        out[f"group_overlap_{name}"] = int(
+            len(set(df.loc[a, "group_id"]) & set(df.loc[b, "group_id"]))
+        )
         out[f"sha_overlap_{name}"] = int(len(set(df.loc[a, "sha256"]) & set(df.loc[b, "sha256"])))
     nn = (e[te] @ e[tr].T).max(1)
     out["test_nn_train_cos_mean"] = float(nn.mean())
@@ -145,15 +157,27 @@ def main() -> None:
     # --- scene groups + label-noise audit -------------------------------------------------
     df["group_id"] = scene_groups(emb, cfg["data"]["dedup"]["emb_cosine_group"])
     gsz = df.groupby("group_id")["group_id"].transform("size")
-    report["scene_groups"] = {"n_groups": int(df["group_id"].nunique()), "images_in_multi_groups": int((gsz > 1).sum()), "largest_group": int(gsz.max())}
+    report["scene_groups"] = {
+        "n_groups": int(df["group_id"].nunique()),
+        "images_in_multi_groups": int((gsz > 1).sum()),
+        "largest_group": int(gsz.max()),
+    }
     issues, oof = label_issues(emb, df["label"].to_numpy(), df["group_id"].to_numpy(), seed)
     df["label_issue"] = issues
     df["oof_conf_true"] = oof[np.arange(len(df)), df["label"].to_numpy()]
     report["cleanlab_flagged"] = int(issues.sum())
-    report["cleanlab_flagged_by_class"] = df[df["label_issue"]].groupby("label_name").size().to_dict()
+    report["cleanlab_flagged_by_class"] = (
+        df[df["label_issue"]].groupby("label_name").size().to_dict()
+    )
 
     # --- splits (steps 32, 34, 35) --------------------------------------------------------
-    sp = make_splits(df["label"].to_numpy(), df["group_id"].to_numpy(), cfg["data"]["test_frac"], cfg["data"]["val_frac"], seed)
+    sp = make_splits(
+        df["label"].to_numpy(),
+        df["group_id"].to_numpy(),
+        cfg["data"]["test_frac"],
+        cfg["data"]["val_frac"],
+        seed,
+    )
     df = pd.concat([df, sp], axis=1)
     report["leakage_audit_grouped"] = leakage_audit(df, emb, "split")
     report["leakage_audit_random"] = leakage_audit(df, emb, "split_random")
@@ -174,7 +198,9 @@ def main() -> None:
         (PROCESSED / f"{s}_ids.txt").write_text("\n".join(ids), encoding="utf-8")
         hashes[s] = hashlib.sha256("\n".join(ids).encode()).hexdigest()
     report["split_sha256"] = hashes
-    (PROCESSED / "curation_report.json").write_text(json.dumps(report, indent=2, default=str), encoding="utf-8")
+    (PROCESSED / "curation_report.json").write_text(
+        json.dumps(report, indent=2, default=str), encoding="utf-8"
+    )
     print(json.dumps(report, indent=2, default=str))
 
 

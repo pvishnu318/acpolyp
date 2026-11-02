@@ -40,7 +40,11 @@ def _process(path: str, size: int) -> dict | None:
             comment = im.info.get("comment") or b""
             pil = im.convert("RGB")
     except Exception:
-        return {"image_id": f"{Path(path).parent.name}/{Path(path).stem}", "sha256": sha, "decode_ok": False}
+        return {
+            "image_id": f"{Path(path).parent.name}/{Path(path).stem}",
+            "sha256": sha,
+            "decode_ok": False,
+        }
     rgb = np.asarray(pil)
     h, w = rgb.shape[:2]
     c = canonicalise(rgb, size)
@@ -78,7 +82,9 @@ def main(size: int = 256, n_jobs: int = 10) -> None:
     root = KVASIR_RAW / "kvasir-dataset-v2"
     files = sorted(str(p) for c in CLASSES for p in (root / c).glob("*.jpg"))
     assert len(files) == 8000, f"expected 8000 files, found {len(files)}"
-    rows = Parallel(n_jobs=n_jobs, batch_size=16, verbose=5)(delayed(_process)(f, size) for f in files)
+    rows = Parallel(n_jobs=n_jobs, batch_size=16, verbose=5)(
+        delayed(_process)(f, size) for f in files
+    )
 
     bad = [r for r in rows if not r["decode_ok"]]
     good = [r for r in rows if r["decode_ok"]]
@@ -97,10 +103,21 @@ def main(size: int = 256, n_jobs: int = 10) -> None:
     np.save(INTERIM / "fov.npy", fov)
     df.to_parquet(INTERIM / "metadata.parquet", index=False)
     (INTERIM / "ingest_report.json").write_text(
-        json.dumps({"n_total": len(rows), "n_corrupted": len(bad), "corrupted": [b["image_id"] for b in bad]}, indent=2),
+        json.dumps(
+            {
+                "n_total": len(rows),
+                "n_corrupted": len(bad),
+                "corrupted": [b["image_id"] for b in bad],
+            },
+            indent=2,
+        ),
         encoding="utf-8",
     )
-    print(df.groupby("label_name")[["width", "height", "teal_frac", "fov_frac", "has_pii_exif"]].mean().round(3))
+    print(
+        df.groupby("label_name")[["width", "height", "teal_frac", "fov_frac", "has_pii_exif"]]
+        .mean()
+        .round(3)
+    )
 
 
 if __name__ == "__main__":
