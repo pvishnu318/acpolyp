@@ -8,7 +8,7 @@ __pycache__/
 *.egg-info/
 
 # data (Kvasir terms of use: research/education only; never redistribute images)
-data/
+/data/
 # model weights and large artifacts
 *.pt
 *.pth
