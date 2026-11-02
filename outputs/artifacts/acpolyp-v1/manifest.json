@@ -1,0 +1,33 @@
+{
+  "version": "acpolyp-v1",
+  "source_run": "ab_acg/seed0",
+  "files": {
+    "calibration.json": "628cc6a7ea23beea539f4cba735db36caa004bfcd43ddc4c669ca0bcec420931",
+    "config.yaml": "efe4517086c3ce3d66336be533ea7104284dc0f23dd6769e1a2ccf8f84c864c9",
+    "model.safetensors": "de0f5d2eb4f2ce75348e36b7a7df52523a36ae7adf4588baf9f343428944a3de",
+    "MODEL_CARD.md": "41ec359563bffd09d73c15cdaa1e6de18657e0e2adfc0a0dbff7cee3b13d5987",
+    "scaler.json": "0436c673b2df2730b158d5030809114627d4f07fb5e5f998a800e39131464a9e"
+  },
+  "test_calibrated": {
+    "acc": 0.9316185696361355,
+    "bal_acc": 0.9316300251256282,
+    "macro_f1": 0.9315113115627173,
+    "mcc": 0.9220473404735848,
+    "auroc_ovr": 0.9932024632816949,
+    "nll": 0.22967571020126343,
+    "brier": 0.11012543548483493,
+    "ece": 0.031247958709185557,
+    "polyp_auroc": 0.9885592838745699,
+    "polyp_auprc": 0.9788001385994465,
+    "polyp_sens": 0.9396984924623115,
+    "polyp_spec": 0.9971326164874552,
+    "polyp_ppv": 0.9790575916230366,
+    "polyp_f1": 0.958974358974359,
+    "polyp_threshold": 0.5,
+    "polyp_sens_tuned": 0.949748743718593,
+    "polyp_spec_tuned": 0.9935483870967742,
+    "polyp_ppv_tuned": 0.9545454545454546,
+    "polyp_f1_tuned": 0.9521410579345088,
+    "polyp_threshold_tuned": 0.2638609707355499
+  }
+}

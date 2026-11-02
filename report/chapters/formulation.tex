@@ -1,0 +1,60 @@
+\chapter{Problem Formulation, Plan and Governance}
+\section{Domain and why a learned model}
+Colorectal polyps are mucosal outgrowths, some of which become cancer; detecting and characterising them during colonoscopy is a recognised quality indicator, and detection
+rates differ between endoscopists. A rule such as ``red convex blob'' fails because polyps are flat, pedunculated or dyed, mucosa varies in colour and
+folds, specular highlights and fluid create convex red regions everywhere. A hand-written colour rule (nearest Lab-colour centroid) reaches macro-F1 \heurF{} and polyp AUROC \heurAU{}
+(chance: \randF{} and 0.5), while fine-tuned networks exceed 0.9 and 0.99: a learnable statistical pattern exists and a deterministic rule is inadequate.
+
+\section{Learning problem}
+Supervised single-label classification into the 8 Kvasir classes, $f_\theta:\mathcal{X}\to\Delta^7$ with $\mathcal{X}=\mathbb{R}^{3\times H\times W}$.
+The clinical question ``is there a polyp?'' is read from the same posterior as $s(x)=P(y=\text{polyps}\mid x)$ with a validation-tuned threshold $\tau^\ast$:
+a one-vs-rest task with a 1\,:\,7 imbalance and, as hard negatives, the other colon classes. The dataset's ``polyps'' class is one of eight, so 8-class scores are never called polyp accuracy.
+
+\section{Objectives, research questions and hypotheses}
+\textbf{Primary objective:} quantify whether an unsupervised active-contour prior improves classification beyond a strong fine-tuned backbone, and attribute any effect to a mechanism.
+\textbf{Engineering constraints:} one 8\,GB GPU, batch-1 latency below 25\,ms, one-command reproducibility, a label-free and unit-tested contour stage.
+\begin{description}
+\item[RQ1] Does contour guidance change macro-F1 over plain ConvNeXt-T? $H_0:\Delta=0$ vs $H_1:\Delta\neq0$ (paired bootstrap, McNemar, DeLong, Holm).
+\item[RQ2] Is any gain due to the image-specific contour, to extra hand-crafted features, or to any mask? $H_0$: shuffled-contour and ellipse controls equal the full model.
+\item[RQ3] How much apparent accuracy is due to acquisition shortcuts and split leakage?
+\item[RQ4] Does guidance help more with little training data?
+\item[RQ5] Are probabilities calibrated, and do conformal sets attain nominal coverage?
+\end{description}
+A null result for RQ1 was declared acceptable in advance; the fallback was to report it and keep the audit, calibration and shortcut findings as the contribution.
+
+\section{Metric taxonomy}
+Primary: macro-F1 (8 classes) and AUROC of $P(\text{polyps})$. Diagnostic: accuracy, balanced accuracy, MCC, per-class precision/recall/F1, sensitivity/specificity/PPV at $\tau^\ast$, NLL, Brier, ECE (15 bins).
+Uncertainty: conformal coverage and set size, risk--coverage. Efficiency: parameters, peak VRAM, training time, batch-1 latency after warm-up with CUDA synchronisation, checkpoint size.
+Contour: Dice and IoU against Kvasir-SEG masks. Cost-sensitive: expected cost per image with a miss costing five false alarms.
+
+\section{Feasibility audit and scope}
+\textbf{Data:} 8{,}000 labelled frames plus 1{,}000 masks, openly downloadable. \textbf{Hardware:} RTX 4060 Laptop (8\,GB), i7-13650HX, 23.7\,GB RAM, 195\,GB free disk.
+\textbf{Cost:} ConvNeXt-T at 224 px, batch 32, bf16: about 25--30\,s per epoch and 2.5\,GB peak VRAM when the machine is otherwise idle (several times slower when other jobs share it, as happened here).
+\textbf{In scope:} Kvasir~v2, Kvasir-SEG as an auxiliary contour benchmark, timm backbones, classical baselines, calibration, conformal prediction, explainability, a local demo.
+\textbf{Out of scope:} detection or segmentation products, video, clinical validation, regulatory claims, and HyperKvasir (its frames overlap Kvasir, so it is not an independent test).
+
+\section{Risk register}
+\begin{table}[h]
+\centering\small
+\begin{tabular}{p{0.04\linewidth}p{0.3\linewidth}p{0.3\linewidth}p{0.25\linewidth}}
+\toprule
+ID & Risk & Mitigation & Outcome \\
+\midrule
+R1 & Download truncation & byte count, SHA-256, zip test, resume & occurred (771\,MB of 2.49\,GB), caught \\
+R2 & Duplicates, label contradiction & hash and embedding de-duplication, data contract & occurred, fixed \\
+R3 & Null result for contour guidance & controls, pre-declared fallback & \textbf{occurred}; reported \\
+R4 & Shortcut learning & canonicalisation, naive-vs-canonical run & shortcuts exist; no accuracy effect \\
+R5 & Split leakage & scene groups, random-split control & mitigated; AUROC inflated by random split \\
+R6 & OOM / commit memory & bf16, memory-mapped data, GPU augmentation & commit exhaustion hit once, fixed by removing workers \\
+R7 & Silent config coercion & parser and unit test & occurred in test, fixed \\
+R8 & Statistics bugs & tests against scikit-learn and hand cases & occurred (DeLong), fixed \\
+R9 & Over-claiming & numbers generated from logs, limitations section & ongoing \\
+R10 & Commercial misuse of research-only data & licence audit, no redistribution & documented \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Licensing}
+Kvasir and Kvasir-SEG are restricted to \emph{research and educational use}; commercial use is forbidden without prior written permission from Simula. The datasets are not redistributed; a few frames appear as attributed illustrative figure panels, as is usual in research papers.
+The code is MIT-licensed; any model trained on Kvasir and any product built on it inherit the dataset's non-commercial terms. Pretrained weights are Apache-2.0 (ConvNeXt-T, ResNet-50,
+EfficientNetV2-S, DINOv2) or MIT (Swin-T), verified from model-hub metadata. A portfolio, paper, teaching resource and open-source code are within the terms; selling or deploying the model commercially is not, without permission.

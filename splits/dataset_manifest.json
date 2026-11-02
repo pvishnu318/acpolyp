@@ -1,0 +1,20 @@
+{
+  "kvasir-v2": {
+    "file": "kvasir-dataset-v2.zip",
+    "bytes": 2489312085,
+    "sha256": "1c7129a377a7730d019e1d18808e26bb33d5b0af986bfd067783ba986d297fc4",
+    "members": 8009,
+    "images_found": 8000,
+    "expected_images": 8000,
+    "url": "https://datasets.simula.no/downloads/kvasir/kvasir-dataset-v2.zip"
+  },
+  "kvasir-seg": {
+    "file": "kvasir-seg.zip",
+    "bytes": 46227172,
+    "sha256": "03b30e21d584e04facf49397a2576738fd626815771afbbf788f74a7153478f7",
+    "members": 2004,
+    "images_found": 2000,
+    "expected_images": 1000,
+    "url": "https://datasets.simula.no/downloads/kvasir-seg.zip"
+  }
+}

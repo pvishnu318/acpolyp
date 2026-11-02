@@ -1,0 +1,216 @@
+{
+  "class_counts": {
+    "dyed-lifted-polyps": 998,
+    "dyed-resection-margins": 994,
+    "esophagitis": 996,
+    "normal-cecum": 997,
+    "normal-pylorus": 997,
+    "normal-z-line": 1000,
+    "polyps": 993,
+    "ulcerative-colitis": 994
+  },
+  "imbalance_ratio_multiclass": 1.0070493454179255,
+  "polyp_vs_rest": {
+    "polyp": 993,
+    "rest": 6976,
+    "ratio_rest_to_polyp": 7.025176233635448
+  },
+  "format_share_by_class": {
+    "dyed-lifted-polyps": {
+      "1280x1024": 0.0,
+      "1920x1072": 0.001,
+      "720x576": 0.996,
+      "other": 0.003
+    },
+    "dyed-resection-margins": {
+      "1280x1024": 0.0,
+      "1920x1072": 0.002,
+      "720x576": 0.998,
+      "other": 0.0
+    },
+    "esophagitis": {
+      "1280x1024": 0.7279,
+      "1920x1072": 0.2058,
+      "720x576": 0.0663,
+      "other": 0.0
+    },
+    "normal-cecum": {
+      "1280x1024": 0.0,
+      "1920x1072": 0.0,
+      "720x576": 1.0,
+      "other": 0.0
+    },
+    "normal-pylorus": {
+      "1280x1024": 0.7312,
+      "1920x1072": 0.2357,
+      "720x576": 0.0331,
+      "other": 0.0
+    },
+    "normal-z-line": {
+      "1280x1024": 0.649,
+      "1920x1072": 0.249,
+      "720x576": 0.102,
+      "other": 0.0
+    },
+    "polyps": {
+      "1280x1024": 0.0101,
+      "1920x1072": 0.0201,
+      "720x576": 0.9688,
+      "other": 0.001
+    },
+    "ulcerative-colitis": {
+      "1280x1024": 0.005,
+      "1920x1072": 0.0191,
+      "720x576": 0.9728,
+      "other": 0.003
+    }
+  },
+  "teal_box_share_by_class": {
+    "dyed-lifted-polyps": 0.5341,
+    "dyed-resection-margins": 0.5443,
+    "esophagitis": 0.0,
+    "normal-cecum": 0.9549,
+    "normal-pylorus": 0.0,
+    "normal-z-line": 0.0,
+    "polyps": 0.5176,
+    "ulcerative-colitis": 0.326
+  },
+  "normality_image_stats": [
+    {
+      "feature": "mean_luma",
+      "skew": 0.01492724497087539,
+      "shapiro_p": 0.16317937180987874,
+      "ks_p": 0.15149716146829062
+    },
+    {
+      "feature": "lap_var",
+      "skew": 1.3630811163586793,
+      "shapiro_p": 4.848588369627798e-19,
+      "ks_p": 3.036655516286071e-16
+    },
+    {
+      "feature": "fov_frac",
+      "skew": 0.644693506716762,
+      "shapiro_p": 7.726973995109883e-24,
+      "ks_p": 1.3134174145787604e-249
+    }
+  ],
+  "n_ac_features": 98,
+  "n_pairs_abs_spearman_gt_0.9": 25,
+  "vif_median": 219.80693330758794,
+  "n_vif_gt_10": 79,
+  "top_mutual_information": [
+    {
+      "feature": "in_b_mean",
+      "mi": 0.727096715542304
+    },
+    {
+      "feature": "out_b_mean",
+      "mi": 0.6340861169110656
+    },
+    {
+      "feature": "out_S_mean",
+      "mi": 0.6283447338760366
+    },
+    {
+      "feature": "out_hue2",
+      "mi": 0.6134806061347242
+    },
+    {
+      "feature": "out_hue5",
+      "mi": 0.6078607249865571
+    },
+    {
+      "feature": "in_hue0",
+      "mi": 0.6046863734057784
+    },
+    {
+      "feature": "out_hue0",
+      "mi": 0.6032649295458938
+    },
+    {
+      "feature": "out_hue3",
+      "mi": 0.6017307017810514
+    },
+    {
+      "feature": "in_a_mean",
+      "mi": 0.5983187167320421
+    },
+    {
+      "feature": "in_S_mean",
+      "mi": 0.5837517326595583
+    },
+    {
+      "feature": "in_hue2",
+      "mi": 0.5376549242106465
+    },
+    {
+      "feature": "out_b_std",
+      "mi": 0.5284800575935868
+    },
+    {
+      "feature": "in_hue5",
+      "mi": 0.525782691127282
+    },
+    {
+      "feature": "in_hue1",
+      "mi": 0.4969948193843905
+    },
+    {
+      "feature": "out_a_mean",
+      "mi": 0.4901709969931849
+    }
+  ],
+  "shortcut_probes": [
+    {
+      "name": "chance",
+      "f1": 0.125,
+      "sd": 0.0,
+      "features": [],
+      "region_acc": 0.6244196260509474,
+      "region_sd": 0.0
+    },
+    {
+      "name": "native resolution only",
+      "f1": 0.13597042449355753,
+      "sd": 0.0,
+      "features": [
+        "width",
+        "height"
+      ],
+      "region_acc": 0.9680050188205772,
+      "region_sd": 0.0
+    },
+    {
+      "name": "resolution + FOV geometry",
+      "f1": 0.34407811094116436,
+      "sd": 0.0,
+      "features": [
+        "width",
+        "height",
+        "aspect",
+        "bbox_w",
+        "bbox_h",
+        "fov_frac"
+      ],
+      "region_acc": 0.993099121706399,
+      "region_sd": 0.0
+    },
+    {
+      "name": "+ ScopeGuide box",
+      "f1": 0.36618825537509503,
+      "sd": 0.0,
+      "features": [
+        "width",
+        "height",
+        "aspect",
+        "bbox_w",
+        "bbox_h",
+        "fov_frac",
+        "teal_frac"
+      ],
+      "region_acc": 0.993099121706399,
+      "region_sd": 0.0
+    }
+  ]
+}

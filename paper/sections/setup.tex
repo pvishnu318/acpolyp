@@ -1,0 +1,24 @@
+\section{Experimental Setup}
+\paragraph{Data.} Kvasir~v2 (8{,}000 frames, 8 classes $\times$ 1{,}000) and Kvasir-SEG (1{,}000 masked polyp frames), both used under their
+research-and-education terms. After de-duplication 7{,}969 frames remain. All test numbers are computed once per frozen model on the
+1{,}594-image grouped test split.
+
+\paragraph{Models.} \emph{Trivial:} random and class prior. \emph{Heuristic:} nearest Lab-colour centroid.
+\emph{Classical:} logistic regression, RBF-SVM, random forest, LightGBM~\cite{ke2017lightgbm} and XGBoost on
+the global and contour feature sets, hyperparameters tuned on validation with 25 Optuna trials; a linear probe on frozen DINOv2 embeddings.
+\emph{Deep:} ResNet-50, EfficientNetV2-S, ConvNeXt-T, Swin-T, DINOv2 ViT-S/14, all fully fine-tuned from public checkpoints (Apache-2.0 / MIT),
+and the guided ACGNet variants on ConvNeXt-T and ResNet-50.
+
+\paragraph{Protocol.} Deep models: $N{=}3$ seeds (initialisation of new layers, data order, augmentation); classical models: $N{=}5$.
+We report mean $\pm$ SD. Differences between variants use (i) a paired bootstrap over test images with 2{,}000 resamples
+of the seed-averaged macro-F1, (ii) exact McNemar and DeLong~\cite{delong1988,sun2014fastdelong} tests on seed-ensembled predictions,
+(iii) a seed-level paired $t$-test, and Holm--Bonferroni correction~\cite{holm1979} across the ablation family.
+With three seeds a Wilcoxon signed-rank test cannot fall below $p=0.25$ (two-sided), so we do not rely on it.
+
+\paragraph{Metrics.} Macro-F1 (primary), accuracy, MCC, polyp-vs-rest AUROC/AUPRC, NLL, Brier, ECE (15 bins), conformal coverage,
+latency (batch 1, after warm-up, with CUDA synchronisation), peak VRAM.
+
+\paragraph{Implementation and hardware.} PyTorch, \texttt{timm~1.0.30}, scikit-image, LightGBM, Optuna; a single laptop
+RTX~4060 (8\,GB) and i7-13650HX. Every run directory stores its configuration, git hash, command, environment, metrics and logits.
+The package contains 38 automated tests covering hand-computed metric cases, DeLong against scikit-learn, gradient flow, single-batch overfitting,
+batch-order invariance and the leakage-free split logic.

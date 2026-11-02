@@ -1,0 +1,14 @@
+ac:
+  work_size: 128
+  cv_iters: 20
+  cv_smoothing: 5
+  cv_lambda_in: 0.5187853240445358
+  cv_lambda_out: 1.0
+  gac_iters: 0
+  gac_alpha: 84.35785490436194
+  gac_sigma: 3.4040810658481453
+  gac_balloon: 0.0
+  gac_smoothing: 1
+  channel: sat
+  dog_frac: 0.12
+  init_frac: 0.2351979302007711

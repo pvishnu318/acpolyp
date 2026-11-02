@@ -1,0 +1,17 @@
+{
+  "temperature": 0.6830037954407228,
+  "polyp_threshold": 0.2638609707355499,
+  "conformal_qhat": 0.783373236656189,
+  "conformal_qhat_validation": 0.4370896816253662,
+  "conformal_alpha": 0.05,
+  "classes": [
+    "dyed-lifted-polyps",
+    "dyed-resection-margins",
+    "esophagitis",
+    "normal-cecum",
+    "normal-pylorus",
+    "normal-z-line",
+    "polyps",
+    "ulcerative-colitis"
+  ]
+}

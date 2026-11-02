@@ -1,0 +1,47 @@
+\section{Method}
+\subsection{Data curation and splits}\label{sec:data}
+\paragraph{Canonicalisation.}
+Frames are cropped to the endoscopic field of view (FOV; largest bright blob after morphological opening,
+convex hull), resized to $256{\times}256$, and a canonical rectangle covering the ScopeGuide box location
+(measured on 419 flagged frames) is blacked out in \emph{every} frame, regardless of native resolution, so that neither
+the box nor the resolution is available to the network. Pixels outside the FOV or inside the rectangle form the invalid mask.
+
+\paragraph{De-duplication and scene groups.}
+Frozen DINOv2-S/14 embeddings define cosine similarity. Pairs with similarity $\ge 0.98$ (or identical bytes) are duplicates:
+within a class the first is kept; cross-class pairs are dropped. Single-linkage components at similarity $\ge 0.92$ form
+\emph{scene groups} (0.90 already chains into a 546-image component). A stratified group split gives train / val / test of
+5{,}578 / 797 / 1{,}594 images with zero group or hash overlap. A stratified random split with the same sizes serves as a leakage control.
+
+\subsection{Active-contour stage}\label{sec:ac}
+On the salience image $S$ (centre--surround of the first Lab principal component, 128\,px, invalid pixels set to
+the valid mean) we run morphological Chan--Vese~\cite{chan2001active,marquezneila2014morphological} from a central disc;
+the region touching the FOV border least is the lesion candidate. A morphological geodesic active contour can then
+snap it to edges. Hyperparameters (channel, centre--surround scale, initial radius, iterations, smoothing, region
+weight, geodesic settings; 80 TPE trials~\cite{akiba2019optuna}) were optimised for Dice against Kvasir-SEG masks of
+frames matched to the \emph{training} split, selected on validation-matched frames and reported on test-matched frames.
+No classification label is used. From the final mask we compute 136 features in four families: \emph{global} colour/texture
+over the valid FOV; \emph{shape} (area, circularity, solidity, eccentricity, Hu moments, curvature statistics, border contact, centroid offset);
+\emph{boundary} (edge strength and inside/outside ring contrast); \emph{region} (Lab/HSV statistics, LBP and masked GLCM inside and outside).
+
+\subsection{ACGNet}\label{sec:acg}
+Let $F\in\mathbb{R}^{C\times h\times w}$ be the last feature map of the backbone, $V$ the valid mask and $M$ the contour mask,
+both area-downsampled to $h{\times}w$. With layer normalisation $\mathrm{LN}$,
+\begin{align}
+g &= \mathrm{LN}\!\Big(\tfrac{\sum V F}{\sum V}\Big), \quad
+f_{in} = \mathrm{LN}\!\Big(\tfrac{\sum M F}{\sum M+\epsilon}\Big), \quad
+f_{out} = \mathrm{LN}\!\Big(\tfrac{\sum (V-M)_+ F}{\sum (V-M)_+ +\epsilon}\Big),\\
+e &= \mathrm{GELU}\big(W_2\,\mathrm{GELU}(W_1 s)\big), \qquad z = W\,\mathrm{Dropout}([g;f_{in};f_{out};e]),
+\end{align}
+where $s$ is the standardised contour-feature vector (statistics fit on the training split only, 1/99-percentile winsorised).
+Regions with mass below 0.05 fall back to $g$. Ablation modes remove $[f_{in};f_{out}]$ (\emph{feature-only}), $e$
+(\emph{pool-only}) or both (\emph{plain}). \textbf{Controls:} \emph{shuffled}---masks and features of a
+\emph{different} image, preserving mask statistics but destroying alignment; \emph{ellipse}---an image-independent
+central ellipse; \emph{gfeat}---extra hand-crafted features without a contour.
+Masks follow the image through every geometric augmentation.
+
+\subsection{Training and post-processing}
+AdamW with weight decay 0.05 (not on biases or norms), backbone learning rate $0.25\times$ the head rate ($2{\cdot}10^{-4}$),
+one warm-up epoch then cosine decay, label smoothing 0.1, gradient clipping 1.0, stochastic depth 0.1, bf16 autocast,
+10 epochs, early stopping on validation macro-F1 (patience 4). Augmentation: random resized crop, flips, rotation by $\pm180^\circ$, colour jitter.
+After training, a temperature $T$ minimises validation NLL~\cite{guo2017calibration}; the polyp threshold $\tau^\ast$
+maximises Youden's $J$ on validation; split-conformal sets use the least-ambiguous score $1-p_y$ with $\alpha=0.05$~\cite{angelopoulos2023conformal}.

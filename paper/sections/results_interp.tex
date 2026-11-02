@@ -1,0 +1,7 @@
+\emph{Grad-CAM against expert masks.} Using the polyp-class Grad-CAM on the 176 Kvasir-SEG test-split polyps, the CAM maximum lies inside the expert mask for \plainPoint{} of frames for the plain model and \acgPoint{} for the guided model;
+the top-20\,\% CAM pixels overlap the mask with IoU \plainCamIoU{} and \acgCamIoU{}. The CAM maximum falls inside the active contour for \plainCamInAC{} and \acgCamInAC{} of frames.
+With $n=176$ these differences are within sampling noise: the guided network does not attend to lesions more accurately than the plain one.
+\emph{TreeSHAP} on LightGBM with global and contour features attributes \shapRegion{} of the total importance to inside/outside colour and texture (region) features and \shapGlobal{} to global features, but only \shapShape{} to contour shape and \shapBoundary{} to boundary features:
+the geometry of the contour carries little information.
+\emph{Layer-wise linear probes} on ConvNeXt-T stages give macro-F1 \lwPreOne{} (pretrained) and \lwFtOne{} (fine-tuned) at stage~1, \lwPreThree{} and \lwFtThree{} at stage~3, and \lwPreFour{} and \lwFtFour{} at stage~4:
+fine-tuning mostly reshapes the last two stages.

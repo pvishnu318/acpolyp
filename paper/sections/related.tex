@@ -1,0 +1,34 @@
+\section{Related Work}
+\paragraph{Gastrointestinal datasets.}
+Kvasir~\cite{pogorelov2017kvasir} introduced 8 expert-labelled classes; Kvasir-SEG~\cite{jha2020kvasirseg} added 1{,}000
+polyp frames with expert masks, and HyperKvasir~\cite{borgli2020hyperkvasir} scaled the collection to 110{,}079 images
+and 374 videos from the same hospital. For video-derived collections, grouping frames by video is already
+recommended to avoid inflated test scores from near-identical neighbouring frames; Kvasir~v2 provides no such
+identifiers, which is why we construct scene groups from embedding similarity (Section~\ref{sec:data}).
+Reported accuracies on Kvasir vary widely with the class subset, split and preprocessing, so we avoid claiming
+superiority over published numbers and instead compare all methods under one protocol.
+
+\paragraph{Active contours.}
+Snakes minimise an energy balancing smoothness and edge attraction~\cite{kass1988snakes}; the Chan--Vese model
+replaces edges by a region-based Mumford--Shah fitting term and handles weak boundaries~\cite{chan2001active}.
+M\'arquez-Neila et al.\ replaced PDE solvers by morphological operators on a binary level set, giving
+simple, fast and stable implementations~\cite{marquezneila2014morphological}. A recent comparison on colonoscopy
+frames found Chan--Vese to fit polyp outlines better than the geodesic model when initialised inside the
+polyp, and that artefact removal and filtering matter~\cite{ismail2022ways}. These works study
+\emph{segmentation}; we study the contour as a spatial prior for \emph{classification} and measure it against a
+trivial centre prior.
+
+\paragraph{Backbones.}
+We benchmark ResNet-50 with an improved training recipe~\cite{he2016resnet,wightman2021resnet},
+EfficientNetV2~\cite{tan2021efficientnetv2}, ConvNeXt~\cite{liu2022convnext}, Swin~\cite{liu2021swin} and a
+DINOv2 ViT~\cite{oquab2024dinov2}, all loaded from \texttt{timm}~\cite{wightman2019timm}.
+
+\paragraph{Shortcuts and label noise.}
+Deep networks often exploit decision rules that work on a benchmark but not under distribution
+shift~\cite{geirhos2020shortcut}. Confident learning ranks suspicious labels from out-of-sample predicted
+probabilities~\cite{northcutt2021confident}; we use it to quantify, not to remove, label noise.
+
+\paragraph{Calibration and conformal prediction.}
+Modern networks are often over-confident; temperature scaling is a simple fix~\cite{guo2017calibration}.
+Split-conformal prediction yields sets with finite-sample marginal coverage~\cite{angelopoulos2023conformal}; we
+use both on a clinically motivated question: when should the system defer to the endoscopist?

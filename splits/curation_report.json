@@ -1,0 +1,103 @@
+{
+  "n_ingested": 8000,
+  "range_check_failures": 0,
+  "blur_outliers_iqr": 0,
+  "dedup": {
+    "duplicate_pairs": 30,
+    "cross_class_pairs": 1,
+    "rows_dropped": 31
+  },
+  "n_after_cleaning": 7969,
+  "class_counts_after_cleaning": {
+    "dyed-lifted-polyps": 998,
+    "dyed-resection-margins": 994,
+    "esophagitis": 996,
+    "normal-cecum": 997,
+    "normal-pylorus": 997,
+    "normal-z-line": 1000,
+    "polyps": 993,
+    "ulcerative-colitis": 994
+  },
+  "scene_groups": {
+    "n_groups": 7812,
+    "images_in_multi_groups": 274,
+    "largest_group": 7
+  },
+  "cleanlab_flagged": 550,
+  "cleanlab_flagged_by_class": {
+    "dyed-lifted-polyps": 92,
+    "dyed-resection-margins": 78,
+    "esophagitis": 159,
+    "normal-cecum": 23,
+    "normal-pylorus": 2,
+    "normal-z-line": 121,
+    "polyps": 34,
+    "ulcerative-colitis": 41
+  },
+  "leakage_audit_grouped": {
+    "group_overlap_train_test": 0,
+    "sha_overlap_train_test": 0,
+    "group_overlap_train_val": 0,
+    "sha_overlap_train_val": 0,
+    "group_overlap_val_test": 0,
+    "sha_overlap_val_test": 0,
+    "test_nn_train_cos_mean": 0.855035662651062,
+    "test_nn_train_cos_p95": 0.9081953763961792,
+    "test_frac_nn_above_0.90": 0.10414052697616061,
+    "test_frac_nn_above_0.92": 0.0
+  },
+  "leakage_audit_random": {
+    "group_overlap_train_test": 41,
+    "sha_overlap_train_test": 0,
+    "group_overlap_train_val": 15,
+    "sha_overlap_train_val": 0,
+    "group_overlap_val_test": 8,
+    "sha_overlap_val_test": 0,
+    "test_nn_train_cos_mean": 0.8556491732597351,
+    "test_nn_train_cos_p95": 0.9115747809410095,
+    "test_frac_nn_above_0.90": 0.12170639899623588,
+    "test_frac_nn_above_0.92": 0.026976160602258468
+  },
+  "split_sizes": {
+    "train": 5578,
+    "test": 1594,
+    "val": 797
+  },
+  "split_class_balance": {
+    "test": {
+      "dyed-lifted-polyps": 200,
+      "dyed-resection-margins": 199,
+      "esophagitis": 199,
+      "normal-cecum": 199,
+      "normal-pylorus": 199,
+      "normal-z-line": 200,
+      "polyps": 199,
+      "ulcerative-colitis": 199
+    },
+    "train": {
+      "dyed-lifted-polyps": 698,
+      "dyed-resection-margins": 696,
+      "esophagitis": 697,
+      "normal-cecum": 698,
+      "normal-pylorus": 698,
+      "normal-z-line": 700,
+      "polyps": 695,
+      "ulcerative-colitis": 696
+    },
+    "val": {
+      "dyed-lifted-polyps": 100,
+      "dyed-resection-margins": 99,
+      "esophagitis": 100,
+      "normal-cecum": 100,
+      "normal-pylorus": 100,
+      "normal-z-line": 100,
+      "polyps": 99,
+      "ulcerative-colitis": 99
+    }
+  },
+  "split_sha256": {
+    "train": "f00c42e5a4362a954173801c0518167d5d72a1191308277dc242fe5e3f76ba8b",
+    "val": "55fbdf4f94691ff09f48465311c72d3dedf64ca91182f23ae21ff532bffa6f56",
+    "test": "09611f850379df7256c7b27141001c2909028f78ff02d369affabb1ffc67bbab"
+  }
+}

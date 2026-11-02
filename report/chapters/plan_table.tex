@@ -1,0 +1,105 @@
+\begin{longtable}{p{0.05\linewidth}p{0.25\linewidth}p{0.14\linewidth}p{0.46\linewidth}}
+\toprule \# & Step & Status & Where / note \\ \endhead
+\midrule\multicolumn{4}{l}{\textbf{Phase I: Problem formulation, ML framing, feasibility}}\\\midrule
+1 & Domain discovery; why rules fail & done & \texttt{docs/FORMULATION.md} \S{}1 (heuristic baseline measured) \\
+2 & Task framing, \texttt{f\_\ensuremath{\theta}: X\ensuremath{\rightarrow}Y} & done & \S{}2 \\
+3 & Objectives, RQs, H0/H1 & done & \S{}3 (RQ1--RQ5) \\
+4 & Metric taxonomy (+ cost matrix) & done & \S{}4; \texttt{scripts/analyze.py} (5:1 cost operating point) \\
+5 & Data/compute/latency feasibility & done & \S{}5 \\
+6 & Scope, non-goals, MVM vs stretch & done & \S{}6 \\
+\midrule\multicolumn{4}{l}{\textbf{Phase II: Literature, SOTA, baselines}}\\\midrule
+7 & Literature survey & done & \texttt{docs/LITERATURE.md}, \texttt{paper/references.bib} (verified entries) \\
+8 & Codebase / model-zoo audit & done, limitation & \S{}3 of LITERATURE; no official Kvasir baselines exist to re-run (optional item n/a) \\
+9 & Benchmark \& leaderboard audit & done, limitation & \S{}1, \S{}4 of LITERATURE; no verifiable public leaderboard for this protocol \\
+10 & Gap synthesis \& contributions & done & \S{}5 of LITERATURE; paper \S{}I \\
+\midrule\multicolumn{4}{l}{\textbf{Phase III: Governance, licensing, planning}}\\\midrule
+11 & Work breakdown \& roadmap & done & this file, \texttt{scripts/run\_deep.py} (declarative experiment table), \texttt{scripts/run\_experiments.ps1} \\
+12 & Risk register \& fallback & done & \texttt{docs/FORMULATION.md} \S{}7 \\
+13 & PII sanitisation & n/a (conditional (public images, no user text)) & EXIF/comment scan: 0/8000 hits (\texttt{data/ingest.py}); burned-in text discussed in \texttt{docs/DATA\_AUDIT.md} \\
+14 & Licence audit & done & \texttt{docs/LICENSING.md} \\
+\midrule\multicolumn{4}{l}{\textbf{Phase IV: Environment}}\\\midrule
+15 & Repo structure, git, ignores & done & standard layout; \texttt{.gitignore}; \texttt{ruff} configured in \texttt{pyproject.toml}; \texttt{.pre-commit-config.yaml} \\
+16 & Locked environment & done & \texttt{.venv}, \texttt{requirements.txt} (frozen), \texttt{pyproject.toml} \\
+17 & GPU/OS configuration & done & CUDA torch 2.11+cu128 verified; Windows-specific fixes documented (spawn, commit limit) \\
+18 & Run logging & done & \texttt{runlog.py}: config, git hash, command, environment, CSV/JSON per run. TensorBoard/MLflow optional n/a \\
+\midrule\multicolumn{4}{l}{\textbf{Phase V: Acquisition}}\\\midrule
+19 & Verified idempotent download & done & \texttt{data/download.py} (byte count, SHA-256, zip test, zip-slip guard, resume) \\
+20 & Ingestion into canonical schema & done & \texttt{data/ingest.py} (images \ensuremath{\rightarrow} uint8 caches + parquet; no CSV/JSONL inputs exist) \\
+\midrule\multicolumn{4}{l}{\textbf{Phase VI: Ground truth}}\\\midrule
+21 & Labelling schema & n/a (conditional (dataset labels used as given)) & class taxonomy in \texttt{data/contracts.py}; boundary cases (esophagitis\ensuremath{\leftrightarrow}z-line) in the audit \\
+22 & Self-annotated gold set & n/a (optional (no clinical expertise to annotate honestly)) & Kvasir-SEG expert masks serve as the gold set for the contour stage \\
+23 & Programmatic labelling & n/a (optional) & cleanlab used for *flagging*, not relabelling \\
+\midrule\multicolumn{4}{l}{\textbf{Phase VII: Cleaning and QA}}\\\midrule
+24 & Sanitisation & done & decode check, valid-FOV, artefact masking (\texttt{data/preprocess.py}) \\
+25 & Duplicates & done & SHA-256 + embedding cosine (pHash evaluated and rejected, with evidence) \\
+26 & Outliers / label noise & done & range checks, IQR blur outliers, \texttt{cleanlab} (550 flagged) \\
+27 & Schema validation & done & \texttt{data/contracts.py} (pydantic + assertions); it caught the duplicate-ID defect \\
+\midrule\multicolumn{4}{l}{\textbf{Phase VIII: EDA}}\\\midrule
+28 & Distributions, normality & done & \texttt{scripts/eda.py}; \texttt{docs/DATA\_AUDIT.md} \S{}4 \\
+29 & Imbalance, subgroups & done & 1.007 (8-class), 1:7 (polyp-vs-rest), per-format and per-box subgroups \\
+30 & Collinearity, shortcuts & done & VIF, Spearman, MI; resolution/box probes \\
+31 & Manifold & done & UMAP (\texttt{outputs/figures/eda\_umap.*}) \\
+\midrule\multicolumn{4}{l}{\textbf{Phase IX: Splits and leakage}}\\\midrule
+32 & Deterministic split & done & stratified group split, seed 42; random split as control; OOD hold-out optional n/a \\
+33 & Leakage audit & done & \texttt{curate.leakage\_audit}; zero group/hash overlap asserted \\
+34 & CV folds & done & 5 grouped folds serialised (\texttt{cv\_fold}), used for out-of-fold label-noise estimation \\
+35 & Versioned artefacts & done & \texttt{data/processed/{train,val,test}\_ids.txt} + SHA-256 in \texttt{curation\_report.json}; Arrow/HDF5 optional n/a (memory-mapped \texttt{.npy} used) \\
+\midrule\multicolumn{4}{l}{\textbf{Phase X: Features and preprocessing}}\\\midrule
+36 & Scaling & done & train-only 1/99 winsorise + z-score (\texttt{dataset.fit\_scaler}); power transforms optional n/a \\
+37 & Categorical/temporal encoding & n/a & no such features \\
+38 & Domain features, selection & done, limitation & 136 features (colour, LBP, GLCM, shape, boundary); importance by MI and SHAP rather than pruning \\
+39 & Tokenisation & n/a & vision task \\
+40 & Augmentation & done & GPU affine + colour jitter, contour mask follows geometry (\texttt{data/augment.py}, tested) \\
+41 & Imbalance mitigation & n/a & classes balanced; polyp-vs-rest handled by threshold tuning, not resampling \\
+42 & Pipeline serialisation & done & \texttt{scaler.json}, \texttt{calibration.json}, \texttt{config.yaml} inside each bundle \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XI: Modelling}}\\\midrule
+43--46 & Formulation, loss, architecture, parameters/VRAM & done & \texttt{docs/FORMULATION.md} \S{}8; \texttt{models/acgnet.py}; measured params and VRAM in profiling table \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XII: Skeleton and baselines}}\\\midrule
+47 & Dataset/DataLoader & done & \texttt{data/dataset.py} (uint8 contract, in-process loader; spawn workers rejected on Windows) \\
+48 & Walking skeleton & done & \texttt{tests/test\_walking\_skeleton.py} (constant model, real loader, runs in seconds) \\
+49 & Trivial \& heuristic baselines & done & random, prior, Lab-centroid heuristic (\texttt{classical.run\_trivial}) \\
+50 & Classical baselines & done & LR, RBF-SVM, RF, LightGBM, XGBoost \\
+51 & Pretrained / confidence baselines & done & frozen-DINOv2 linear probe; max-softmax risk--coverage \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XIII: Implementation}}\\\midrule
+52 & Config schema & done & \texttt{configs/*.yaml} + dotted CLI overrides (unit-tested; caught the YAML \texttt{1e-3} string bug) \\
+53 & Modular architecture, hooks & done & \texttt{ACGNet}; forward hooks for Grad-CAM and layer-wise probes \\
+54 & Metrics & done & \texttt{training/metrics.py} (\texttt{ignore\_index} n/a no padding) \\
+55 & Optimiser, scheduler, clipping & done & AdamW, no decay on bias/norm, warm-up + cosine, clip 1.0 \\
+56 & Train/eval loops & done & \texttt{training/engine.py} (accumulation optional n/a not needed) \\
+57 & Seeding & done, limitation & all RNGs seeded; cuDNN deterministic; \texttt{use\_deterministic\_algorithms(warn\_only=True)}, so a few CUDA kernels remain non-deterministic (bit-exact replay is not guaranteed; seed-to-seed spread is reported) \\
+58 & Checkpoint, early stopping & done & best \texttt{.safetensors} by val macro-F1, patience 4 \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XIV: Debugging}}\\\midrule
+59 & Shape/device asserts & done & in \texttt{ACGNet.forward}, \texttt{predict} (finite logits) and tests \\
+60 & Single-batch overfit & done & \texttt{tests/test\_model\_sanity.py} \\
+61 & Gradient flow & done & test (after one step, because timm zero-inits last BN gains); grad norm logged each epoch \\
+62 & Numerical stability & done & fp32 loss on bf16 logits, finite asserts, stable softmax \\
+63 & Unit tests & done & 48 tests; batch-order invariance included \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XV: Optimisation}}\\\midrule
+64 & AMP, SDPA, cached features & done & bf16 autocast; timm fused attention for ViT/Swin; cached frozen embeddings \\
+65 & PEFT & limitation (optional) & frozen-backbone linear probe only; LoRA not used \\
+66 & HPO & done, limitation & Optuna/TPE on validation for the contour (80 trials) and classical models (25 each); deep nets use one shared recipe. A learning-rate sweep (seed 0) and a post hoc 3-seed replication at 2x LR quantify what that costs: the plain model improves by 0.8 points at 2x LR and the guided-vs-plain gap stays null \\
+67 & Ensembling & done & seed and backbone soft-voting \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XVI: Post-processing}}\\\midrule
+68 & Threshold tuning & done & Youden J on validation (+ cost-optimal threshold) \\
+69 & Calibration & done & temperature scaling, reliability diagrams, ECE, Brier \\
+70 & Uncertainty & done & split-conformal (LAC), risk--coverage \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XVII: Evaluation}}\\\midrule
+71 & Locked test evaluation & done & test touched once per frozen run; secondary dataset optional n/a (HyperKvasir overlaps) \\
+72 & Multi-seed & done & deep N=3, classical N=5, mean \ensuremath{\pm} SD \\
+73 & Significance & done & paired bootstrap (2,000), McNemar, DeLong, Holm, Cohen's d, seed-level tests \\
+74 & Ablations & done & 7 variants + 3 controls \\
+75 & Sensitivity, scaling, Pareto & done & learning curves, LR sweep, accuracy--latency \\
+76 & OOD / perturbation & done & JPEG compression and Gaussian blur on 480 stratified frames, 3 seeds x 5 variants incl. controls (\texttt{scripts/robustness2.py}); single-seed noise/blur/brightness/JPEG screen (\texttt{scripts/robustness.py}, helper) \\
+77 & Profiling & done & latency (warm-up + sync), VRAM, train time, checkpoint size \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XVIII: Interpretability and errors}}\\\midrule
+78 & Confusion, per-class, ROC/PR & done & \texttt{analyze.py} \\
+79 & Failure taxonomy & done & error gallery + automated categories (label-flagged, confusable pairs) + manual inspection notes in the report \\
+80 & Attribution & done & TreeSHAP, Grad-CAM (pointing game vs expert masks) \\
+81 & Layer-wise probes & done & per-stage linear probes, pretrained vs fine-tuned \\
+82 & Subgroup audit & done & by scope format, ScopeGuide box, class; worst-group accuracy \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XIX: Packaging}}\\\midrule
+83 & One-command CLI & done & \texttt{scripts/run\_experiments.ps1}; entry points \texttt{scripts/train.py}, \texttt{scripts/evaluate.py}, \texttt{scripts/predict.py} (wrappers over \texttt{acpolyp.training.train} / \texttt{acpolyp.cli}), \texttt{python -m acpolyp.cli serve} \\
+84 & Bundle + local UI & done & \texttt{outputs/artifacts/acpolyp-v1/} (weights, scaler, calibration, model card, hashes); FastAPI + custom single-page UI (instead of Gradio) \\
+\midrule\multicolumn{4}{l}{\textbf{Phase XX: Documentation and archival}}\\\midrule
+85 & README, figures/tables script, manuscript, slides, clean-room check & done, limitation & \texttt{README.md}; \texttt{scripts/make\_figures.py} (runs EDA, contour, analysis, export, paper-asset scripts: 300-dpi vector PDFs, \texttt{booktabs} tables with bold-best and \ensuremath{\pm} SD); \texttt{paper/main.tex} (IEEEtran, 7 pp.); \texttt{report/report.pdf} (34 pp.); \texttt{slides/ACPolyp.pptx} (13 slides); clean-room clone + install + 48 tests run locally (the 8 h pipeline was not re-run from scratch). Publishing to GitHub/Zenodo/Hugging Face is left to the owner (needs their accounts) \\
+\bottomrule\end{longtable}

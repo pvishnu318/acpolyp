@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACPolyp · Active-contour polyp classification</title>
+<meta name="description" content="Active-contour-guided feature extraction for automated polyp classification in endoscopy (Kvasir v2). Research prototype.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%2316c3a5'/><path d='M8 18c2-8 14-10 16-2-4-3-9-3-16 2z' fill='%230b1620'/></svg>">
+<link rel="stylesheet" href="/static/app.css?v=3">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="#top"><span class="logo"></span>ACPolyp</a>
+  <nav>
+    <a href="#demo">Live demo</a><a href="#pipeline">Method</a><a href="#results">Results</a><a href="#audit">Data audit</a><a href="#about">Honesty</a>
+  </nav>
+  <button id="theme" class="ghost" aria-label="Toggle theme">◐</button>
+</header>
+
+<main id="top">
+<section class="hero">
+  <p class="eyebrow">Research prototype · Kvasir v2 · 8 classes</p>
+  <h1>Active contours, taken seriously,<br>on real endoscopy data.</h1>
+  <p class="lede">A leakage-audited, shortcut-aware pipeline that delineates lesion candidates with morphological active contours and feeds that spatial prior into a deep classifier &mdash; evaluated with statistics, not adjectives.</p>
+  <p class="callout" id="finding" hidden></p>
+  <div class="stats" id="heroStats"></div>
+  <div class="cta"><a class="btn" href="#demo">Try it on an image</a><a class="btn ghost" href="#results">See the evidence</a></div>
+</section>
+
+<section id="demo">
+  <h2>Live demo</h2>
+  <p class="sub">Upload an endoscopy frame (JPEG/PNG). Everything runs on this machine; nothing is stored or sent anywhere.</p>
+  <div class="demo-grid">
+    <div class="card drop" id="drop">
+      <input type="file" id="file" accept="image/*" hidden>
+      <div class="drop-inner" id="dropInner">
+        <div class="drop-icon">⬆</div>
+        <p><b>Drop an image</b> or <button class="link" id="pick">browse</button></p>
+        <p class="muted small">Max 12&nbsp;MB · the image is processed in memory</p>
+      </div>
+      <img id="preview" alt="" hidden>
+      <div id="samples" class="samples" hidden></div>
+    </div>
+    <div class="card out" id="out" hidden>
+      <div class="tabs" role="tablist">
+        <button data-view="canonical" class="on">Canonical</button>
+        <button data-view="contour">Active contour</button>
+        <button data-view="cam">Grad-CAM</button>
+      </div>
+      <div class="viewer"><img id="viewImg" alt="analysis overlay"><div class="spin" id="spin" hidden></div></div>
+      <div class="verdict" id="verdict"></div>
+      <div id="bars" class="bars"></div>
+      <div id="conformal" class="conformal"></div>
+      <p class="muted small" id="meta"></p>
+    </div>
+  </div>
+  <p class="warn">⚠ Research prototype trained on a single-centre dataset. Not a medical device and not for clinical decisions.</p>
+</section>
+
+<section id="pipeline">
+  <h2>The pipeline</h2>
+  <p class="sub">Every stage is deterministic, unit-tested and shares code between training and this server.</p>
+  <ol class="steps">
+    <li><span>1</span><div><h3>Canonicalise</h3><p>Detect the endoscopic field of view, crop it, mask the ScopeGuide picture-in-picture box in <em>every</em> frame so the mask itself carries no label information.</p></div></li>
+    <li><span>2</span><div><h3>Delineate</h3><p>Morphological Chan&ndash;Vese on a Lab-PCA centre&ndash;surround salience map, then a morphological geodesic active contour snaps the boundary to edges. No labels involved.</p></div></li>
+    <li><span>3</span><div><h3>Describe</h3><p>136 interpretable features: contour geometry, boundary contrast, inside/outside colour and texture (LBP, GLCM).</p></div></li>
+    <li><span>4</span><div><h3>Guide</h3><p>A ConvNeXt backbone pools its feature map <em>inside</em> and <em>outside</em> the contour and fuses contour features before the classifier.</p></div></li>
+    <li><span>5</span><div><h3>Calibrate &amp; abstain</h3><p>Temperature scaling and split-conformal prediction sets give honest confidence and a coverage guarantee.</p></div></li>
+  </ol>
+</section>
+
+<section id="results">
+  <h2>Results</h2>
+  <p class="sub" id="resultsSub">Held-out test split, scene-grouped, mean ± SD over seeds. 95&nbsp;% paired-bootstrap intervals in the ablation.</p>
+  <div id="resultsBody" class="results"><p class="muted">Loading…</p></div>
+</section>
+
+<section id="audit">
+  <h2>Data audit</h2>
+  <p class="sub">What we found in Kvasir v2 before training a single model.</p>
+  <div id="auditBody" class="audit"></div>
+</section>
+
+<section id="about">
+  <h2>Honesty section</h2>
+  <div class="grid3">
+    <div class="card"><h3>Dataset terms</h3><p>Kvasir is licensed for <b>research and educational use only</b>; commercial use needs written permission from Simula. The datasets are not redistributed; a few frames appear as attributed illustrations.</p></div>
+    <div class="card"><h3>Not clinical</h3><p>Single-centre data, no patient IDs, no external validation set. Results may not transfer to other scopes, hospitals or populations.</p></div>
+    <div class="card"><h3>Reproducible</h3><p>One command rebuilds every table and figure from raw logs. Seeds, splits and SHA-256 hashes are recorded.</p></div>
+  </div>
+</section>
+</main>
+
+<footer>© ACPolyp · code MIT · Kvasir &copy; Simula (research use only) · Pogorelov et al., MMSys 2017</footer>
+<script src="/static/app.js?v=3"></script>
+</body>
+</html>

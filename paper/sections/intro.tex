@@ -1,0 +1,31 @@
+\section{Introduction}
+Colorectal cancer prevention relies on finding and removing polyps during colonoscopy, yet adenoma detection varies
+between endoscopists~\cite{pogorelov2017kvasir}. Computer-aided classification of endoscopic findings is therefore an
+active research topic, and the Kvasir dataset~\cite{pogorelov2017kvasir} has become a common benchmark: 8{,}000
+frames from one Norwegian hospital, evenly split over three anatomical landmarks, three pathological findings and two
+polyp-removal classes.
+
+Two observations motivate this work. First, \emph{benchmark numbers on Kvasir are rarely comparable}: public
+results use different class subsets, random frame-level splits and different preprocessing, and the dataset ships
+no patient or video identifiers. We show that its frames carry strong acquisition shortcuts. Native image
+resolution alone, without a single pixel, separates upper-GI from colon frames with \resOnlyAcc{} accuracy, and a
+picture-in-picture endoscope-position box occurs in \tealCecum{} of cecum frames and in no upper-GI frame.
+Second, \emph{active contours}~\cite{kass1988snakes,chan2001active} are a classical, label-free way of delineating
+a lesion candidate, and are still studied for colonoscopy segmentation~\cite{ismail2022ways}, but it is unclear
+whether such a weak, unsupervised spatial prior still helps a modern pretrained network.
+
+We therefore ask a deliberately sceptical question: \emph{does an unsupervised active-contour prior improve
+a strong fine-tuned backbone, and if so, through which mechanism?} Our contributions are:
+\begin{enumerate}
+\item \textbf{A verified data audit} of Kvasir~v2: a label-contradicting duplicate and 30 further duplicate pairs, 6.9\,\% suspected label noise,
+ shortcut quantification, and a scene-grouped leakage-aware split (Section~\ref{sec:data}).
+\item \textbf{A label-free contour pipeline}: artefact-masked field-of-view canonicalisation, a two-stage
+ morphological Chan--Vese / geodesic active contour tuned against expert masks on training-matched frames only,
+ and 136 interpretable shape, boundary and region features (Section~\ref{sec:ac}).
+\item \textbf{ACGNet}, a backbone head that pools features inside and outside the contour and fuses contour
+ features, together with \emph{controls} (shuffled-image contours, a central ellipse, extra non-contour features)
+ that separate ``a mask'' from ``this image's contour'' (Section~\ref{sec:acg}).
+\item \textbf{A rigorous evaluation protocol}: multi-seed runs, paired bootstrap, McNemar and DeLong tests with
+ Holm correction, calibration, split-conformal prediction, error and subgroup analysis, and learning curves.
+\item \textbf{An open, tested, one-command reproducible package} with a local web demo.
+\end{enumerate}

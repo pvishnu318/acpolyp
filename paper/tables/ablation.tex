@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\caption{Ablation on ConvNeXt-T ($N{=}3$ seeds). $\Delta$: seed-averaged macro-F1 difference to the plain baseline with 95\,\% paired-bootstrap interval over test images; $p$: Holm-adjusted bootstrap p-value.}
+\label{tab:ablation}
+\small
+\begin{adjustbox}{max width=\linewidth}\begin{tabular}{lrrrl r}
+\toprule
+Variant & Macro-F1 & Acc. & Polyp AUROC & $\Delta$ [95\,\% CI] & $p_\mathrm{Holm}$ \\
+\midrule
+ConvNeXt-T (plain) & 0.9233{\scriptsize$\pm$0.0006} & 0.9235 & 0.9931 & +0.0000 -- & -- \\
++ global hand-crafted features & 0.9295{\scriptsize$\pm$0.0035} & 0.9295 & 0.9927 & +0.0062 [+0.0013, +0.0111] & 0.072 \\
++ contour pooling & 0.9264{\scriptsize$\pm$0.0037} & 0.9264 & 0.9934 & +0.0031 [-0.0015, +0.0075] & 0.380 \\
++ contour features & 0.9288{\scriptsize$\pm$0.0003} & 0.9289 & 0.9932 & +0.0055 [+0.0004, +0.0106] & 0.180 \\
+ACG-ConvNeXt (full) & 0.9277{\scriptsize$\pm$0.0035} & 0.9279 & 0.9900 & +0.0045 [-0.0004, +0.0091] & 0.296 \\
+full, shuffled contours (control) & 0.9275{\scriptsize$\pm$0.0015} & 0.9276 & 0.9912 & +0.0043 [-0.0010, +0.0093] & 0.354 \\
+full, central ellipse (control) & 0.9267{\scriptsize$\pm$0.0067} & 0.9268 & 0.9908 & +0.0035 [-0.0017, +0.0085] & 0.380 \\
+\bottomrule
+\end{tabular}\end{adjustbox}
+\end{table*}

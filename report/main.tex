@@ -1,0 +1,71 @@
+\documentclass[11pt,a4paper,oneside]{report}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,booktabs,longtable,graphicx,xcolor,url,siunitx,enumitem,float,caption,adjustbox}
+\usepackage[expansion=false]{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{etoolbox}
+% the paper's full-width tables must fit a single report column
+\AtBeginEnvironment{table*}{\scriptsize\setlength{\tabcolsep}{1.4pt}}
+\input{numbers}
+\graphicspath{{figures/}{../outputs/figures/}}
+\setlist{itemsep=2pt,topsep=3pt}
+\setlength{\parskip}{3pt}
+\providecommand{\IEEEkeywords}{}
+
+\title{\textbf{ACPolyp: Active-Contour-Guided Feature Extraction\\for Endoscopic Finding and Polyp Classification}\\[0.4em]
+\large A leakage-audited, shortcut-aware study on Kvasir v2 --- full technical report}
+\author{ACPolyp project}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+\noindent Research prototype. Not a medical device. Kvasir is licensed for research and education only.
+\end{abstract}
+\tableofcontents
+
+\chapter*{Executive Summary}
+\addcontentsline{toc}{chapter}{Executive Summary}
+\textbf{Question.} Does an \emph{unsupervised} active-contour prior improve deep classification of endoscopic findings on Kvasir~v2, and through which mechanism?
+
+\textbf{Answer.} No measurable improvement. The full contour-guided model scores macro-F1 \acgF{} against \plainF{} for plain ConvNeXt-T
+($\Delta=$ \acgDelta{}, 95\,\% CI \acgDeltaLo{} to \acgDeltaHi{}, Holm-adjusted $p=$ \acgPHolm{}); controls with contours from the \emph{wrong} image (\shufDelta{}) or an image-independent ellipse (\ellDelta{}) are indistinguishable.
+The contour itself is a weak localiser (Dice \acDice{} against \ellDice{} for a central ellipse).
+
+\textbf{What the project delivers.}
+\begin{itemize}
+\item A verified \textbf{data audit} of Kvasir~v2: \nDropped{} duplicate frames (one filed under two classes), \flaggedPct{} suspected label errors, resolution alone predicting upper-GI vs colon at \resOnlyAcc{}, a scene-grouped leakage-aware split.
+\item A \textbf{benchmark} of five fine-tuned backbones (macro-F1 \resnetF{}--\dinoF{}; soft-voting ensemble \ensF{}; polyp-vs-rest AUROC above 0.99), classical baselines and frozen-embedding probes under one protocol.
+\item A \textbf{controlled ablation} with paired bootstrap, McNemar, DeLong and Holm correction, learning curves, robustness curves and a learning-rate sweep.
+\item \textbf{Calibrated, conformal outputs}: ECE \eceRaw{}$\to$\eceCal{}; group-aware conformal sets with \confCov{} coverage at a 95\,\% target (validation-calibrated sets under-covered at \confCovVal{} --- an instructive failure).
+\item \textbf{Error analysis:} \errPairs{} of errors fall in two confusable pairs and \errFlagged{} involve flagged labels, so label ambiguity bounds attainable accuracy.
+\item A tested, reproducible \textbf{software package} (48 tests, one-command pipeline, versioned model bundle), a local \textbf{web application}, an IEEE-format \textbf{paper}, this report and a slide deck.
+\end{itemize}
+
+\textbf{Honest limits.} Single-centre data without patient IDs; three seeds for deep models; one training recipe for all variants; no external validation; not clinical.
+Commercial use of Kvasir-trained models requires written permission from the dataset owner (Simula); this report states that plainly because it affects any plan to monetise the work.
+
+\input{chapters/formulation}
+\input{chapters/data_audit}
+
+\chapter{The Study: Related Work, Method, Experiments and Results}
+\input{sections/related}
+\input{sections/method}
+\input{sections/setup}
+\input{sections/results}
+\input{sections/discussion}
+
+\input{chapters/engineering}
+
+\appendix
+\chapter{Compliance with the 85-step workflow}
+\input{chapters/plan_table}
+
+\input{chapters/error_taxonomy}
+\input{chapters/extra_figures}
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

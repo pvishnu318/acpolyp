@@ -1,0 +1,140 @@
+{
+  "layerwise_probe": {
+    "pretrained": [
+      0.8187804655808122,
+      0.8689244404669195,
+      0.8712009599294399,
+      0.8896915372188999
+    ],
+    "finetuned": [
+      0.8137390242043241,
+      0.8769805979411075,
+      0.915370165703174,
+      0.9209516935746221
+    ]
+  },
+  "shap": {
+    "top20": [
+      {
+        "feature": "g_hue0",
+        "family": "global",
+        "mean_abs_shap": 0.351683386620894
+      },
+      {
+        "feature": "g_hue2",
+        "family": "global",
+        "mean_abs_shap": 0.3226212964944357
+      },
+      {
+        "feature": "out_hue5",
+        "family": "region",
+        "mean_abs_shap": 0.24186473890093402
+      },
+      {
+        "feature": "g_S_mean",
+        "family": "global",
+        "mean_abs_shap": 0.2307807642309607
+      },
+      {
+        "feature": "out_b_std",
+        "family": "region",
+        "mean_abs_shap": 0.22684304906175115
+      },
+      {
+        "feature": "out_S_mean",
+        "family": "region",
+        "mean_abs_shap": 0.22009005546076296
+      },
+      {
+        "feature": "in_b_mean",
+        "family": "region",
+        "mean_abs_shap": 0.18638579033366892
+      },
+      {
+        "feature": "g_hue5",
+        "family": "global",
+        "mean_abs_shap": 0.17340900683349203
+      },
+      {
+        "feature": "g_b_std",
+        "family": "global",
+        "mean_abs_shap": 0.15037285057685024
+      },
+      {
+        "feature": "d_L",
+        "family": "region",
+        "mean_abs_shap": 0.14245484836448544
+      },
+      {
+        "feature": "out_hue0",
+        "family": "region",
+        "mean_abs_shap": 0.13707278331509626
+      },
+      {
+        "feature": "in_hue5",
+        "family": "region",
+        "mean_abs_shap": 0.1305487256631934
+      },
+      {
+        "feature": "in_a_mean",
+        "family": "region",
+        "mean_abs_shap": 0.13004958456135138
+      },
+      {
+        "feature": "in_hue2",
+        "family": "region",
+        "mean_abs_shap": 0.12635402706159435
+      },
+      {
+        "feature": "in_glcm_contrast",
+        "family": "region",
+        "mean_abs_shap": 0.12423211297118077
+      },
+      {
+        "feature": "g_hue3",
+        "family": "global",
+        "mean_abs_shap": 0.11884929369145915
+      },
+      {
+        "feature": "g_a_mean",
+        "family": "global",
+        "mean_abs_shap": 0.11126691904405926
+      },
+      {
+        "feature": "d_V",
+        "family": "region",
+        "mean_abs_shap": 0.11090238094881909
+      },
+      {
+        "feature": "in_glcm_corr",
+        "family": "region",
+        "mean_abs_shap": 0.10458064885144927
+      },
+      {
+        "feature": "in_hue0",
+        "family": "region",
+        "mean_abs_shap": 0.10305171242164159
+      }
+    ],
+    "family_share": {
+      "global": 0.32092852433951197,
+      "shape": 0.061615307379686346,
+      "boundary": 0.032769675264519564,
+      "region": 0.5846864930162822
+    }
+  },
+  "gradcam_pointing": {
+    "ab_none": {
+      "n": 176,
+      "pointing_game": 0.8352272727272727,
+      "cam_top20_iou": 0.3480993894086826,
+      "cam_peak_inside_contour": 0.6477272727272727
+    },
+    "ab_acg": {
+      "n": 176,
+      "pointing_game": 0.7954545454545454,
+      "cam_top20_iou": 0.32698356609495094,
+      "cam_peak_inside_contour": 0.6761363636363636
+    }
+  }
+}

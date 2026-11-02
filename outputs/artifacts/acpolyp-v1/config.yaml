@@ -1,0 +1,48 @@
+seed: 42
+data:
+  image_size: 256
+  input_size: 224
+  test_frac: 0.2
+  val_frac: 0.1
+  dedup:
+    emb_cosine_dup: 0.98
+    emb_cosine_group: 0.92
+ac:
+  work_size: 128
+  cv_iters: 20
+  cv_smoothing: 5
+  cv_lambda_in: 0.5187853240445358
+  cv_lambda_out: 1.0
+  gac_iters: 0
+  gac_alpha: 84.35785490436194
+  gac_sigma: 3.4040810658481453
+  gac_balloon: 0.0
+  gac_smoothing: 1
+  channel: sat
+  dog_frac: 0.12
+  init_frac: 0.2351979302007711
+model:
+  name: convnext_tiny
+  pretrained: true
+  drop_path: 0.1
+  head_dropout: 0.2
+  ac_mode: acg
+train:
+  epochs: 10
+  batch_size: 32
+  lr: 0.0002
+  backbone_lr_mult: 0.25
+  weight_decay: 0.05
+  warmup_epochs: 1
+  label_smoothing: 0.1
+  grad_clip: 1.0
+  amp: true
+  patience: 4
+  mixup: 0.0
+  seeds:
+  - 0
+  - 1
+  - 2
+eval:
+  bootstrap: 2000
+  conformal_alpha: 0.05

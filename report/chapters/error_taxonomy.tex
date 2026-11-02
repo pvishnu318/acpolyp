@@ -1,0 +1,17 @@
+\chapter{Failure Taxonomy of the Most Confident Errors}
+The 36 most confident errors of the seed-ensembled ACG-ConvNeXt (117 errors in total on the test split) were inspected and sorted into four categories.
+\emph{The categories are visual judgements by the project author, who is not a clinician; they are not a clinical adjudication and should be reviewed by a gastroenterologist.}
+\begin{table}[h]
+\centering\small
+\begin{tabular}{p{0.2\linewidth}rrp{0.5\linewidth}}
+\toprule
+Category & $n$ & flagged & What the frames show \\
+\midrule
+A. Esophagitis $\leftrightarrow$ z-line & 17 & 15 & Irregular, inflamed or whitish mucosa at or near the gastro-oesophageal junction; both labels plausible, esophagitis is defined relative to the z-line. \\
+B. Dyed lifted $\leftrightarrow$ resection margin & 7 & 5 & Blue-dye craters or lifted lesions at different stages of endoscopic resection; the visible state often supports either label. \\
+C. ``Polyp'' predicted as another class & 7 & 2 & Frames labelled polyps with no distinct visible lesion (homogeneous mucosa) or a small or marginal lesion; predicted cecum, colitis or pylorus. The clinically important group. \\
+D. Other & 5 & 4 & Diffuse redness labelled colitis predicted as cecum or esophagitis; a snare loop with bleeding. \\
+\bottomrule
+\end{tabular}
+\caption{Failure taxonomy of the 36 most confident errors; ``flagged'' = flagged by confident learning. Overall 26 of 36 are flagged, against about 5\,\% of correct predictions.}
+\end{table}

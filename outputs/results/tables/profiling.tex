@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Efficiency on an RTX 4060 Laptop GPU (8 GB), bf16 autocast, batch size 1 latency.}
+\label{tab:profiling}
+\small
+\begin{adjustbox}{max width=\linewidth}\begin{tabular}{lrrrrr}
+\toprule
+Model & Params (M) & ms/img (bs1) & Peak VRAM (MB) & Train (min) & Ckpt (MB) \\
+\midrule
+ResNet-50 & 23.5 & \textbf{11.9} & \textbf{1880} & \textbf{4.1} & 90 \\
+EfficientNetV2-S & 20.2 & 74.2 & 2835 & 9.0 & \textbf{78} \\
+ConvNeXt-T & 27.8 & 15.1 & 2493 & 4.7 & 106 \\
+Swin-T & 27.5 & 61.0 & 2730 & 13.9 & 105 \\
+DINOv2 ViT-S/14 & 21.6 & 30.5 & 1967 & 5.1 & 83 \\
+ACG-ConvNeXt (full) & 27.9 & 13.8 & 2494 & 4.6 & 106 \\
+\bottomrule
+\end{tabular}\end{adjustbox}
+\end{table*}

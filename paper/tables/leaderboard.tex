@@ -1,0 +1,32 @@
+\begin{table*}[t]
+\centering
+\caption{Held-out test performance (mean$\pm$SD over seeds; deep models $N{=}3$, classical $N{=}5$). Best per column in bold. ECE after temperature scaling.}
+\label{tab:leaderboard}
+\small
+\begin{adjustbox}{max width=\linewidth}\begin{tabular}{lrrrrr}
+\toprule
+Model & Macro-F1 & Acc. & MCC & Polyp AUROC & ECE \\
+\midrule
+ResNet-50 & 0.8708{\scriptsize$\pm$0.0043} & 0.8712{\scriptsize$\pm$0.0045} & 0.8530{\scriptsize$\pm$0.0051} & 0.9916{\scriptsize$\pm$0.0017} & 0.0300{\scriptsize$\pm$0.0026} \\
+EfficientNetV2-S & 0.9257{\scriptsize$\pm$0.0025} & 0.9258{\scriptsize$\pm$0.0025} & 0.9153{\scriptsize$\pm$0.0029} & \textbf{0.9957{\scriptsize$\pm$0.0004}} & 0.0256{\scriptsize$\pm$0.0035} \\
+ConvNeXt-T & 0.9233{\scriptsize$\pm$0.0006} & 0.9235{\scriptsize$\pm$0.0006} & 0.9128{\scriptsize$\pm$0.0007} & 0.9931{\scriptsize$\pm$0.0029} & 0.0353{\scriptsize$\pm$0.0027} \\
+Swin-T & 0.9327{\scriptsize$\pm$0.0045} & 0.9327{\scriptsize$\pm$0.0045} & 0.9232{\scriptsize$\pm$0.0051} & 0.9947{\scriptsize$\pm$0.0014} & 0.0306{\scriptsize$\pm$0.0050} \\
+DINOv2 ViT-S/14 & \textbf{0.9344{\scriptsize$\pm$0.0058}} & \textbf{0.9343{\scriptsize$\pm$0.0058}} & \textbf{0.9250{\scriptsize$\pm$0.0066}} & 0.9916{\scriptsize$\pm$0.0015} & 0.0242{\scriptsize$\pm$0.0035} \\
+ACG-ConvNeXt (full) & 0.9277{\scriptsize$\pm$0.0035} & 0.9279{\scriptsize$\pm$0.0035} & 0.9178{\scriptsize$\pm$0.0040} & 0.9900{\scriptsize$\pm$0.0013} & 0.0325{\scriptsize$\pm$0.0016} \\
+ACG-ResNet-50 & 0.8560{\scriptsize$\pm$0.0103} & 0.8565{\scriptsize$\pm$0.0100} & 0.8363{\scriptsize$\pm$0.0114} & 0.9887{\scriptsize$\pm$0.0023} & 0.0353{\scriptsize$\pm$0.0049} \\
+LightGBM $\cdot$ global colour/texture & 0.7507{\scriptsize$\pm$0.0037} & 0.7513{\scriptsize$\pm$0.0037} & 0.7160{\scriptsize$\pm$0.0042} & 0.9565{\scriptsize$\pm$0.0003} & 0.1285{\scriptsize$\pm$0.0011} \\
+LightGBM $\cdot$ contour features only & 0.8063{\scriptsize$\pm$0.0029} & 0.8073{\scriptsize$\pm$0.0029} & 0.7804{\scriptsize$\pm$0.0033} & 0.9721{\scriptsize$\pm$0.0005} & 0.1450{\scriptsize$\pm$0.0036} \\
+LightGBM $\cdot$ global + contour & 0.7954{\scriptsize$\pm$0.0045} & 0.7964{\scriptsize$\pm$0.0045} & 0.7678{\scriptsize$\pm$0.0052} & 0.9716{\scriptsize$\pm$0.0006} & 0.1310{\scriptsize$\pm$0.0056} \\
+Logistic reg. $\cdot$ global + contour & 0.7763 & 0.7773 & 0.7458 & 0.9712{\scriptsize$\pm$0.0000} & 0.0308{\scriptsize$\pm$0.0000} \\
+LightGBM $\cdot$ global + central-ellipse features (control) & 0.8003{\scriptsize$\pm$0.0028} & 0.8005{\scriptsize$\pm$0.0028} & 0.7721{\scriptsize$\pm$0.0032} & 0.9788{\scriptsize$\pm$0.0002} & 0.1303{\scriptsize$\pm$0.0027} \\
+LightGBM $\cdot$ global + shuffled-contour features (control) & 0.7840{\scriptsize$\pm$0.0013} & 0.7847{\scriptsize$\pm$0.0014} & 0.7542{\scriptsize$\pm$0.0016} & 0.9695{\scriptsize$\pm$0.0004} & 0.1338{\scriptsize$\pm$0.0008} \\
+RBF-SVM $\cdot$ global + contour & 0.7900 & 0.7905 & 0.7609 & 0.9749{\scriptsize$\pm$0.0000} & \textbf{0.0219} \\
+Random forest $\cdot$ global + contour & 0.7658{\scriptsize$\pm$0.0044} & 0.7666{\scriptsize$\pm$0.0044} & 0.7338{\scriptsize$\pm$0.0051} & 0.9624{\scriptsize$\pm$0.0004} & 0.1079{\scriptsize$\pm$0.0044} \\
+XGBoost $\cdot$ global + contour & 0.7947{\scriptsize$\pm$0.0045} & 0.7955{\scriptsize$\pm$0.0044} & 0.7667{\scriptsize$\pm$0.0051} & 0.9735{\scriptsize$\pm$0.0011} & 0.1179{\scriptsize$\pm$0.0054} \\
+Linear probe $\cdot$ frozen DINOv2 & 0.8889{\scriptsize$\pm$0.0000} & 0.8890 & 0.8732 & 0.9951{\scriptsize$\pm$0.0000} & 0.0354 \\
+Random guess & 0.1311 & 0.1311 & 0.0070 & 0.4947 & 0.2116 \\
+Class prior (majority) & 0.0279 & 0.1255 & 0.0000 & 0.4917 & 0.0000 \\
+Heuristic $\cdot$ nearest Lab-colour centroid & 0.4762 & 0.4793 & 0.4066 & 0.8372 & 0.2669 \\
+\bottomrule
+\end{tabular}\end{adjustbox}
+\end{table*}

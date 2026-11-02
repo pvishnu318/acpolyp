@@ -1,0 +1,28 @@
+\section{Discussion}
+\paragraph{Why did the contour not help?}
+Three observations point the same way. (i) The contour is a weak localiser (Dice \acDice{}, over-segmenting \acOverSeg{}$\times$), so the spatial prior it provides is only slightly better than a central ellipse.
+(ii) A fine-tuned ConvNeXt, Swin or DINOv2 backbone already localises the evidence it needs; the Grad-CAM peaks of the plain and guided models fall inside the expert polyp mask equally often (Section~V-H).
+(iii) The residual error is dominated by label ambiguity rather than by missing localisation: \errPairs{} of errors lie in two confusable pairs and \errFlagged{} involve flagged labels, so there is little headroom for any prior.
+The small positive differences we see ($\le0.6$ points) track \emph{extra hand-crafted inputs}, whether or not they involve a contour, and the shuffled and ellipse controls reproduce them.
+In the classical setting the same pattern holds: contour features beat global features (\lgbGF{} to \lgbGACF{}), but a central ellipse does better still (\lgbGEllF{}).
+
+\paragraph{What the study does establish.}
+(1) Kvasir v2 contains duplicates, a label contradiction, strong acquisition shortcuts and substantial label ambiguity, all quantified here.
+(2) Under one audited protocol, modern fine-tuned backbones reach macro-F1 of 0.92--0.93 (ensemble \ensF{}); published Kvasir accuracies are not directly comparable because class subsets, splits and preprocessing differ and we could not verify those protocols, so we make no claim about ranking against them. Our own control shows a random split changes macro-F1 by about one point (\randsplitF{} against \plainF{}, different test images) and the polyp AUROC far more.
+(3) Calibration is easy to get wrong in practice: validation data reused for model selection under-covered conformal sets (\confCovVal{} against 95\,\%), and a group-aware split of the test set repaired it.
+(4) A random split can mislead through the AUROC (\randsplitAU{} against \plainAU{}) more than through accuracy.
+
+\paragraph{Threats to validity and limitations.}
+\emph{Single centre, no patient IDs:} scene groups reduce but cannot exclude patient-level leakage, and nothing here tests transfer to other scopes or hospitals.
+\emph{Three seeds:} bootstrap intervals over test images capture sampling uncertainty given those seeds; seed-level tests are fragile and are not used for inference.
+\emph{One recipe for all variants:} deep hyper-parameters were not tuned per variant, which is fair across variants but may under-serve any of them (a learning-rate sweep is reported in the repository).
+\emph{Unsupervised contour only:} a learned, interactive or video-propagated prior could behave differently; we make no claim about those.
+\emph{Overlay text} inside the field of view was not removed.
+\emph{Not clinical:} no prospective validation, no regulatory claim, and the dataset terms exclude commercial use without written permission.
+
+\paragraph{Future work.}
+Learned lesion priors trained on Kvasir-SEG, patient-level splits on datasets that provide identifiers, external validation, and video-based consistency are the natural next steps.
+
+\section{Conclusion}
+An unsupervised active-contour prior, evaluated with controls, did not measurably improve fine-tuned deep classification of Kvasir findings, while the audit, the leakage-aware protocol, the calibrated and conformal outputs and the error analysis are reusable.
+We report the null result as a result, with the code, splits and statistics needed to challenge it.

@@ -1,0 +1,13 @@
+\begin{abstract}
+Classification of endoscopic findings is routinely benchmarked on Kvasir, a single-centre dataset without patient identifiers whose frames carry acquisition artefacts.
+We audit Kvasir~v2 (\nDropped{} duplicate frames including one file filed under two classes; \flaggedPct{} suspected label errors; native resolution alone predicts upper-GI versus colon with \resOnlyAcc{} accuracy),
+build a leakage-aware scene-grouped split, and ask whether an \emph{unsupervised} active-contour prior still helps a strong fine-tuned network.
+A two-stage morphological Chan--Vese / geodesic contour, tuned on training-matched Kvasir-SEG masks, reaches a Dice of \acDice{} against \ellDice{} for a central ellipse.
+Fed into ACGNet, a head that pools backbone features inside and outside the contour and fuses 98 contour features, it yields macro-F1 \acgF{} against \plainF{} for plain ConvNeXt-T
+($\Delta=$ \acgDelta{}, 95\,\% CI \acgDeltaLo{} to \acgDeltaHi{}, Holm $p=$ \acgPHolm{}): \textbf{not a statistically supported gain}, and controls using shuffled-image contours or a central ellipse perform the same.
+Five fine-tuned backbones reach macro-F1 \resnetF{}--\dinoF{} and a soft-voting ensemble \ensF{}; polyp-vs-rest AUROC exceeds 0.99.
+Metadata shortcuts gave no measurable accuracy advantage, whereas a naive random split inflated polyp AUROC to \randsplitAU{}.
+\errPairs{} of errors fall in two confusable class pairs and \errFlagged{} involve flagged labels, so label ambiguity bounds attainable accuracy.
+Temperature scaling lowers ECE from \eceRaw{} to \eceCal{}, and group-aware split-conformal sets reach \confCov{} coverage at a 95\,\% target.
+Code, audited splits, 48 tests and a local demo are released; Kvasir remains restricted to research and education.
+\end{abstract}

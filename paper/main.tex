@@ -1,0 +1,33 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,amssymb,booktabs,graphicx,xcolor,cite,url,siunitx,microtype,adjustbox}
+\usepackage[hidelinks]{hyperref}
+\input{numbers}
+\graphicspath{{figures/}}
+\sisetup{detect-all}
+
+\begin{document}
+\title{Active-Contour-Guided Feature Extraction for Endoscopic Finding and Polyp Classification:\\ A Leakage-Audited, Shortcut-Aware Study on Kvasir}
+\author{\IEEEauthorblockN{ACPolyp Project}
+\IEEEauthorblockA{Research prototype --- code and splits: see repository README}}
+\maketitle
+
+\input{sections/abstract}
+\begin{IEEEkeywords}
+polyp classification, active contours, Chan--Vese, endoscopy, Kvasir, shortcut learning, calibration, conformal prediction
+\end{IEEEkeywords}
+
+\input{sections/intro}
+\input{sections/related}
+\input{sections/method}
+\input{sections/setup}
+\input{sections/results}
+\input{sections/discussion}
+
+\section*{Reproducibility and Ethics}
+All code, configurations, split hashes and logs are in the accompanying repository; \texttt{scripts/run\_experiments.ps1}
+rebuilds every table and figure. Kvasir and Kvasir-SEG are used under their research-and-education terms; the datasets are not redistributed, and the few frames shown in figures are attributed illustrations.
+This is a research prototype, not a medical device, and must not be used for clinical decisions.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}

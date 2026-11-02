@@ -1,0 +1,39 @@
+# environments / secrets
+.venv/
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# data (Kvasir terms of use: research/education only; never redistribute images)
+data/
+# model weights and large artifacts
+*.pt
+*.pth
+*.safetensors
+*.ckpt
+*.npy
+*.npz
+*.pkl
+*.joblib
+*.zip
+
+# run outputs: keep only small result tables/figures that are committed deliberately
+outputs/runs/
+outputs/cache/
+outputs/tensorboard/
+outputs/logs/
+!outputs/results/
+!outputs/figures/
+
+# LaTeX build products
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz

@@ -1,0 +1,48 @@
+seed: 42
+
+data:
+  image_size: 256            # cached resolution (uint8); models crop/resize from this
+  input_size: 224            # network input
+  test_frac: 0.20            # grouped + stratified
+  val_frac: 0.10
+  dedup:                     # frozen DINOv2-S/14 cosine similarity (pHash rejected: see docs/DATA_AUDIT.md)
+    emb_cosine_dup: 0.98     # duplicate frame -> drop (cross-class duplicates: drop both)
+    emb_cosine_group: 0.92   # same scene -> never split across train/val/test
+
+ac:                          # active-contour pipeline (see src/acpolyp/ac)
+  work_size: 128             # contour evolution resolution
+  cv_iters: 60               # morphological Chan-Vese iterations
+  cv_smoothing: 2
+  cv_lambda_in: 1.0
+  cv_lambda_out: 1.0
+  gac_iters: 25              # morphological geodesic refinement
+  gac_alpha: 100.0
+  gac_sigma: 2.0
+  gac_balloon: 0.0
+  gac_smoothing: 1
+  channel: lab_pc1           # polyp-salience channel
+
+model:
+  name: convnext_tiny
+  pretrained: true
+  drop_path: 0.1
+  head_dropout: 0.2
+  ac_mode: none              # none | acg | acg_random | acg_center | acg_oracle
+
+train:
+  epochs: 10
+  batch_size: 32
+  lr: 2.0e-4                 # head / new layers
+  backbone_lr_mult: 0.25     # backbone lr = lr * mult
+  weight_decay: 0.05
+  warmup_epochs: 1
+  label_smoothing: 0.1
+  grad_clip: 1.0
+  amp: true
+  patience: 4
+  mixup: 0.0
+  seeds: [0, 1, 2]
+
+eval:
+  bootstrap: 2000
+  conformal_alpha: 0.05

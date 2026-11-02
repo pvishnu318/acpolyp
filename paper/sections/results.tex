@@ -1,0 +1,83 @@
+\section{Results}
+\subsection{Active-contour quality}
+On the \acNtest{} test-split polyp frames that could be matched to Kvasir-SEG masks, the tuned contour reaches a Dice of \acDice{}
+(95\,\% bootstrap CI \acDiceLo{}--\acDiceHi{}, IoU \acIoU{}), against \ellDice{} for a central ellipse, \defDice{} for the untuned defaults and \fovDice{} for the whole field of view.
+The paired gain over the ellipse is \acDelta{} Dice (CI \acDeltaLo{} to \acDeltaHi{}, Wilcoxon $p=$ \acWilcoxP{}); the contour is better on \acBetterFrac{} of the images.
+It is a \emph{weak} localiser: it over-segments (median \acOverSeg{}$\times$ the expert area) and fails on small lesions
+(Dice \acDiceSmall{} for polyps under 10\,\% of the FOV, \acDiceMed{} for 10--25\,\%, \acDiceLarge{} above 25\,\%; Fig.~\ref{fig:acgallery}).
+The search itself switched off the geodesic refinement stage (0 iterations), i.e.\ the second stage did not help.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{ac_gallery.pdf}
+\caption{Contour (orange) vs expert mask (green) on Kvasir-SEG test matches: best, median and worst by Dice. Failures are lumen/fold regions and small lesions.}
+\label{fig:acgallery}
+\end{figure}
+
+\subsection{Classical baselines and feature controls}
+Chance is a macro-F1 of \randF{}; the Lab-colour centroid heuristic reaches \heurF{} (polyp AUROC \heurAU{}).
+LightGBM on global colour and texture features reaches \lgbGF{}; adding the contour features raises it to \lgbGACF{}.
+\emph{However, the controls match or exceed the real contour:} replacing the contour by an image-independent central ellipse gives \lgbGEllF{},
+and a contour borrowed from another image gives \lgbGShufF{}. What helps is therefore ``colour and texture inside versus outside a central region'', not the contour itself.
+A linear probe on frozen DINOv2 embeddings reaches \dinoProbeF{}, above every hand-crafted pipeline.
+
+\subsection{Deep backbones}
+Table~\ref{tab:leaderboard} compares all models under one protocol. Fine-tuned ConvNeXt-T, EfficientNetV2-S, Swin-T and DINOv2 ViT-S/14 lie within about one to two points of each other
+(macro-F1 \convnextF{}, \effnetF{}, \swinF{} and \dinoF{}), while the ResNet-50 recipe trails at \resnetF{}. Polyp-vs-rest AUROC is above 0.99 for all fine-tuned networks.
+A soft-voting ensemble of the five backbones reaches \ensF{}.
+\input{tables/leaderboard}
+
+\subsection{Does contour guidance help? (RQ1, RQ2)}
+Table~\ref{tab:ablation} and Fig.~\ref{fig:forest} give the ablation on ConvNeXt-T. Plain ConvNeXt-T scores \plainF{}$\pm$\plainFSD{}. The full ACG model scores \acgF{}$\pm$\acgFSD{}
+($\Delta=$ \acgDelta{}, 95\,\% CI \acgDeltaLo{} to \acgDeltaHi{}, Holm-adjusted $p=$ \acgPHolm{}).
+\textbf{The difference is not statistically supported}, and neither are the shuffled-image control (\shufDelta{}) and the ellipse control (\ellDelta{}): all three overlap.
+Non-contour global features alone give \gfeatDelta{}, the largest and only nominally significant bootstrap difference, which does not survive Holm correction (adjusted $p=$ \gfeatPHolm{}).
+Seed-level paired $t$-tests with $N{=}3$ are fragile (the plain model's seed SD is only \plainFSD{}, which inflates standardised effect sizes) and are therefore reported in the repository but not relied on.
+Generality: ACG on ResNet-50 scores \resacgF{}\,$\pm$\,\resacgFSD{} against \resnetF{} for plain ResNet-50.
+\input{tables/ablation}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{ablation_forest.pdf}
+\caption{Difference in macro-F1 to plain ConvNeXt-T with 95\,\% paired-bootstrap intervals (unadjusted). The full model and both image-independent controls are indistinguishable.}
+\label{fig:forest}
+\end{figure}
+
+\subsection{Shortcuts and leakage (RQ3)}
+Despite the strong metadata shortcuts (Section~\ref{sec:data}), a ConvNeXt-T trained on \emph{naive} full frames (no crop, no artefact mask) reaches \naiveF{}\,$\pm$\,\naiveFSD{},
+statistically equal to the canonical \plainF{}: the shortcuts separate upper-GI from colon, which pixels already do, while the remaining errors are within-region pairs where neither shortcut carries information.
+Training and testing on a \emph{random} split with the same sizes gives \randsplitF{}\,$\pm$\,\randsplitFSD{} (different test images, so not paired), consistent with the modest \randLeakPct{} near-duplicate overlap measured in the audit.
+
+\subsection{Calibration and conformal prediction (RQ5)}
+Temperature scaling reduces ECE from \eceRaw{} to \eceCal{}. Validation-calibrated conformal sets reach only \confCovVal{} coverage at a nominal 95\,\%,
+because the validation split was reused for early stopping, temperature and threshold and is therefore optimistic. Calibrating on a random half of the test \emph{scene groups} and evaluating on the other half
+(200 repeats) restores coverage: \confCov{}\,$\pm$\,\confCovSD{}, mean set size \confSize{}, \confSingle{} singleton sets (Fig.~\ref{fig:cal}).
+For polyp-vs-rest, at a miss cost five times a false alarm, the 0.5 threshold has expected cost \costHalf{} per image against \costYouden{} for the validation-Youden threshold and \costOpt{} for the validation cost-optimal threshold:
+thresholds tuned on the optimistic validation split did not beat the default.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{calibration_roc_pr.pdf}
+\caption{Reliability before/after temperature scaling, and polyp-vs-rest ROC and PR curves (seed 0).}
+\label{fig:cal}
+\end{figure}
+
+\subsection{Error analysis}
+Of \nErrors{} test errors (\errRate{}), \errPairs{} fall into two confusable pairs (esophagitis$\leftrightarrow$z-line and dyed-lifted$\leftrightarrow$dyed-resection-margins; Fig.~\ref{fig:conf}).
+\errFlagged{} of the errors involve images flagged by confident learning, against \corrFlagged{} of correct predictions, so a large share of the residual error is label ambiguity rather than model failure.
+We inspected the 36 most confident errors (a visual judgement by a non-clinician, not an adjudication): 17 are esophagitis$\leftrightarrow$z-line, 7 are dyed-lifted$\leftrightarrow$resection-margin, 7 are ``polyp'' frames with no distinct visible lesion (the clinically important group, only 2 of which are flagged), and 5 are other colitis/cecum mixes; 26 of the 36 are flagged.
+The most confident errors (Fig.~\ref{fig:err}) show craters with dye that are plausible for either dyed class, homogeneous mucosa labelled ``polyp'' with no visible lesion, and z-line frames with inflammation.
+Accuracy is \accColonScope{} on colon-scope (720$\times$576) frames and \accUpperScope{} on larger-format upper-GI frames; the worst class accuracy is \worstClassAcc{}.
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\columnwidth]{confusion_matrix.pdf}
+\caption{Confusion matrix of the seed-ensembled ACG-ConvNeXt on the test split.}
+\label{fig:conf}
+\end{figure}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{error_gallery.pdf}
+\caption{The twelve most confident errors, with confident-learning flags.}
+\label{fig:err}
+\end{figure*}
+
+\subsection{Data efficiency, robustness and interpretability (RQ4)}
+\input{sections/results_extra}

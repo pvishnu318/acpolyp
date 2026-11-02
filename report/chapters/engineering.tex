@@ -1,0 +1,41 @@
+\chapter{Engineering, Testing and Deployment}
+\section{Repository architecture}
+\begin{itemize}
+\item \texttt{src/acpolyp/data}: download, ingestion, canonicalisation, curation, dataset and GPU augmentation.
+\item \texttt{src/acpolyp/ac}: salience, two-stage morphological active contour, 136 features, tuning against Kvasir-SEG, extraction.
+\item \texttt{src/acpolyp/models}: ACGNet and ablation modes, backbone factory, frozen-embedding extraction.
+\item \texttt{src/acpolyp/training}: engine (AMP, warm-up/cosine, clipping, early stopping), metrics, calibration, conformal, classical baselines.
+\item \texttt{src/acpolyp/evaluation}: paired statistics, aggregation across seeds, Grad-CAM, figure style.
+\item \texttt{src/acpolyp/app}: FastAPI service and single-page frontend; \texttt{inference.py} shares the training preprocessing.
+\item \texttt{scripts/}: experiment table, analysis, figure and paper-asset generation, model bundling, robustness, interpretability, the master script.
+\item \texttt{tests/}: 48 automated tests.
+\end{itemize}
+
+\section{Engineering decisions driven by evidence}
+\begin{description}
+\item[GPU augmentation.] DataLoader workers are spawned (not forked) on Windows and each costs about 2.4\,GB of commit memory. With train, validation and test
+loaders persistent, 18 workers exhausted the commit limit (Windows error 1455) and a run hung. Augmentation now runs on the GPU as one affine warp
+shared by image, contour mask and valid mask, which is faster, removes worker processes and gives the web server the identical evaluation transform.
+\item[Lazy memory-mapped caches.] Pickling a 1.5\,GB array into spawned workers failed; datasets now pickle as file paths and open memory maps on first access.
+\item[Unit tests as a safety net.] They caught (i) a wrong DeLong AUC (midranks sliced in the wrong order), (ii) YAML 1.1 reading \texttt{1e-3} as a string,
+(iii) a misleading gradient-flow check, because timm zero-initialises the last batch-norm gain of each residual block, so those branches legitimately have zero
+gradient at step~0, and (iv) a duplicate-ID defect in the dataset itself via the data contract.
+\item[Train/serve parity.] The bundle is re-run on raw test JPEGs through the complete preprocessing path and compared image by image with the logits saved at training
+time: 100\,\% argmax agreement, mean absolute probability difference $2.5{\times}10^{-4}$ (bf16 versus fp32 arithmetic).
+\end{description}
+
+\section{Reproducibility}
+Every run directory stores its configuration, git commit, command line, environment, per-epoch history, logits and summary. Seeds cover Python, NumPy,
+PyTorch and CUDA; cuDNN is deterministic. \texttt{torch.use\_deterministic\_algorithms} is enabled with \texttt{warn\_only}, so a few CUDA kernels remain
+non-deterministic: bit-exact replay is not guaranteed, which is why seed-to-seed spread is reported everywhere. \texttt{requirements.txt} freezes the
+environment and \texttt{scripts/run\_experiments.ps1} rebuilds everything from an empty checkout.
+
+\section{Web application}
+A FastAPI backend (\texttt{/api/predict}, \texttt{/api/results}, \texttt{/api/health}, \texttt{/api/samples}) serves a dependency-free single-page frontend with a live demo
+(calibrated probabilities, polyp probability against the validation-tuned threshold, conformal prediction set, contour and Grad-CAM overlays), a pipeline explainer,
+a results dashboard rendered from the exported JSON, the data audit and an honesty section. Uploads are processed in memory and never stored. The page states
+prominently that it is a research prototype.
+
+\section{Packaging}
+\texttt{scripts/build\_bundle.py} writes \texttt{outputs/artifacts/acpolyp-v1/}: weights (\texttt{safetensors}), configuration, scaler, calibration
+(temperature, polyp threshold, conformal quantile), a model card and SHA-256 hashes. Selection of the bundled model uses \emph{validation} macro-F1 only.
