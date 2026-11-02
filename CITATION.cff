@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below and also cite the Kvasir datasets (see README)."
+title: "ACPolyp: active-contour-guided polyp classification study on Kvasir v2"
+version: 1.0.0
+# TODO(publish): replace the placeholder author, then run scripts/prepublish_check.py
+authors:
+  - family-names: "REPLACE_FAMILY_NAME"
+    given-names: "REPLACE_GIVEN_NAME"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+license: MIT
+repository-code: "https://github.com/REPLACE_USER/acpolyp"
+abstract: >-
+  A leakage-audited, shortcut-aware, statistically controlled study of whether an unsupervised
+  active-contour prior improves deep classification of endoscopic findings on Kvasir v2, with a
+  calibrated, conformal, explainable inference stack. Research prototype, not a medical device.
+  The main finding is a null result: no statistically supported gain from contour guidance.
+keywords:
+  - polyp classification
+  - active contours
+  - Kvasir
+  - endoscopy
+  - conformal prediction
+  - reproducibility

@@ -1,0 +1,15 @@
+{
+  "title": "ACPolyp: active-contour-guided polyp classification study on Kvasir v2",
+  "upload_type": "software",
+  "description": "A leakage-audited, shortcut-aware, statistically controlled study of whether an unsupervised active-contour prior improves deep classification of endoscopic findings on Kvasir v2, with calibrated and conformal inference and a local web app. Main finding: no statistically supported gain from contour guidance (null result). Research prototype, not a medical device. The Kvasir datasets are NOT included; they are licensed by Simula for research and education only.",
+  "creators": [
+    { "name": "REPLACE_FAMILY_NAME, REPLACE_GIVEN_NAME" }
+  ],
+  "license": "MIT",
+  "keywords": ["polyp classification", "active contours", "Kvasir", "endoscopy", "conformal prediction", "reproducibility"],
+  "related_identifiers": [
+    { "identifier": "10.1145/3083187.3083212", "relation": "references", "scheme": "doi" },
+    { "identifier": "10.1007/978-3-030-37734-2_37", "relation": "references", "scheme": "doi" }
+  ],
+  "notes": "Source code, audited split id lists with SHA-256 hashes, paper and report sources. Model weights are not part of this record; see the Hugging Face repository."
+}
