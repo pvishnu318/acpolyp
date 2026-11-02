@@ -21,9 +21,9 @@ from sklearn.model_selection import StratifiedGroupKFold, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
 from ..config import load_config
+from ..models.embed import cached
 from ..paths import INTERIM, PROCESSED, ensure
 from .contracts import CLASSES
-from ..models.embed import cached
 
 EMB = "vit_small_patch14_dinov2.lvd142m"
 
