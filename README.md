@@ -4,6 +4,8 @@
 > improves deep classification of endoscopic findings (Kvasir v2), plus a calibrated, conformal, explainable inference stack
 > and a local web app.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23906295.svg)](https://doi.org/10.5281/zenodo.23906295) (all versions; v1.0.0 is [10.5281/zenodo.23906296](https://doi.org/10.5281/zenodo.23906296))
+
 **Research prototype. Not a medical device. Kvasir is licensed for research and education only (see [docs/LICENSING.md](docs/LICENSING.md)).**
 
 ## What this project actually found

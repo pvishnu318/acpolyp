@@ -14,6 +14,11 @@ authors:
     given-names: "D. Greeshmanth"
     affiliation: "Dept. of Computer Science and Engineering, Amrita Vishwa Vidyapeetham, Bangalore Campus"
 license: MIT
+doi: 10.5281/zenodo.23906296
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23906295
+    description: "Concept DOI, resolves to the latest version"
 repository-code: "https://github.com/pvishnu318/acpolyp"
 abstract: >-
   A leakage-audited, shortcut-aware, statistically controlled study of whether an unsupervised
