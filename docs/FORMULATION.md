@@ -104,8 +104,10 @@ Márquez-Neila et al. (2014): the level set is a binary function `u`; each itera
 `smoothing` times (length term), with no re-initialisation. An optional second stage minimises the geodesic energy
 `∫ g(|∇(G_σ*I)|) ds`, `g = 1/√(1 + α|∇(G_σ*I)|)`, via morphological geodesic active contours.
 
-*Salience.* `S = PC₁(Lab) − G_{σ_w} * PC₁(Lab)` (centre–surround on the first Lab principal component of the valid
-pixels, `σ_w = dog_frac · size`), percentile-normalised to [0,1]; invalid pixels get the valid mean. The polarity of
+*Salience.* `S = c(I) − G_{σ_w} * c(I)` (centre–surround of a scalar channel `c`, `σ_w = dog_frac · size`),
+percentile-normalised to [0,1]. The channel is a searched hyperparameter (Lab-PC1, a\*, L\*, HSV saturation); the
+tuned configuration (`configs/ac_tuned.yaml`, used for every reported result) selected **HSV saturation** with
+`dog_frac = 0.12`, 20 Chan–Vese iterations and **no** geodesic refinement (0 iterations). Lab-PC1 is the untuned default; invalid pixels get the valid mean. The polarity of
 the two-phase result is resolved by choosing the region that touches the FOV border least. A central-ellipse fallback
 fires when the area is outside [2 %, 85 %] of the FOV.
 

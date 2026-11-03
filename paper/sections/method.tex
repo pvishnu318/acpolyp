@@ -13,8 +13,8 @@ within a class the first is kept; cross-class pairs are dropped. Single-linkage 
 5{,}578 / 797 / 1{,}594 images with zero group or hash overlap. A stratified random split with the same sizes serves as a leakage control.
 
 \subsection{Active-contour stage}\label{sec:ac}
-On the salience image $S$ (centre--surround of the first Lab principal component, 128\,px, invalid pixels set to
-the valid mean) we run morphological Chan--Vese~\cite{chan2001active,marquezneila2014morphological} from a central disc;
+On a salience image $S$ (a centre--surround-filtered scalar channel at 128\,px, invalid pixels set to the valid mean;
+the search chose the HSV saturation channel from the candidates Lab-PC1, $a^*$, $L^*$ and saturation) we run morphological Chan--Vese~\cite{chan2001active,marquezneila2014morphological} from a central disc;
 the region touching the FOV border least is the lesion candidate. A morphological geodesic active contour can then
 snap it to edges. Hyperparameters (channel, centre--surround scale, initial radius, iterations, smoothing, region
 weight, geodesic settings; 80 TPE trials~\cite{akiba2019optuna}) were optimised for Dice against Kvasir-SEG masks of
