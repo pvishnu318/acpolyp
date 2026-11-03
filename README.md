@@ -5,6 +5,7 @@
 > and a local web app.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23906295.svg)](https://doi.org/10.5281/zenodo.23906295) (all versions; v1.0.0 is [10.5281/zenodo.23906296](https://doi.org/10.5281/zenodo.23906296))
+· Weights (gated, research-only): [VishnuRuthlessCoder/acpolyp-v1](https://huggingface.co/VishnuRuthlessCoder/acpolyp-v1)
 
 **Research prototype. Not a medical device. Kvasir is licensed for research and education only (see [docs/LICENSING.md](docs/LICENSING.md)).**
 

@@ -48,7 +48,7 @@ The local branch is currently called `master`; renaming to `main` matches the de
 2. On GitHub, open Releases, Draft a new release, choose the existing tag `v1.0.0` and publish it (a bare tag does not trigger Zenodo). Zenodo archives it and reads `.zenodo.json` / `CITATION.cff`.
 3. Copy the DOI badge into the top of `README.md` and the DOI into `CITATION.cff`, commit, push.
 
-## 5. Hugging Face (weights and model card)
+## 5. Hugging Face (weights and model card) (done: https://huggingface.co/VishnuRuthlessCoder/acpolyp-v1, gated with manual approval)
 
 ```bash
 pip install -U huggingface_hub
