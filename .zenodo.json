@@ -3,7 +3,9 @@
   "upload_type": "software",
   "description": "A leakage-audited, shortcut-aware, statistically controlled study of whether an unsupervised active-contour prior improves deep classification of endoscopic findings on Kvasir v2, with calibrated and conformal inference and a local web app. Main finding: no statistically supported gain from contour guidance (null result). Research prototype, not a medical device. The Kvasir datasets are NOT included; they are licensed by Simula for research and education only.",
   "creators": [
-    { "name": "REPLACE_FAMILY_NAME, REPLACE_GIVEN_NAME" }
+    { "name": "Reddy, P. Vishnu Vardhan", "orcid": "0009-0006-9605-6739", "affiliation": "Amrita Vishwa Vidyapeetham, Bangalore Campus" },
+    { "name": "Reddy, V. Guru Puneeth", "affiliation": "Amrita Vishwa Vidyapeetham, Bangalore Campus" },
+    { "name": "Reddy, D. Greeshmanth", "affiliation": "Amrita Vishwa Vidyapeetham, Bangalore Campus" }
   ],
   "license": "MIT",
   "keywords": ["polyp classification", "active contours", "Kvasir", "endoscopy", "conformal prediction", "reproducibility"],

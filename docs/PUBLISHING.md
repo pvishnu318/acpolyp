@@ -15,15 +15,9 @@ If you want a commercial product, ask Simula for written permission first (conta
 
 ## 1. Fill in the placeholders
 
-Replace every `REPLACE_*` in `CITATION.cff` and `.zenodo.json` with your real name, GitHub user and repository name.
-Optionally set your name in the `\author` block of `paper/main.tex` and `report/main.tex`, then rebuild the PDFs.
-Set a real git identity (the history currently uses "ACPolyp author"; rewriting history is your call, a new
-commit identity from now on is enough):
-
-```bash
-git config user.name "Your Name"
-git config user.email "you@example.com"
-```
+Done: authors, affiliation, ORCID and the repository URL (https://github.com/pvishnu318/acpolyp) are filled in
+`CITATION.cff`, `.zenodo.json`, `LICENSE`, `paper/main.tex` and `report/main.tex`, and the PDFs are rebuilt.
+The first commits carry the placeholder identity "ACPolyp author"; commits from now on use the first author's name.
 
 ## 2. Run the gate
 

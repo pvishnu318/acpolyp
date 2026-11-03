@@ -88,6 +88,11 @@ split-conformal sets provide calibrated uncertainty.
 Every run directory (`outputs/runs/<tag>/seed<k>`) stores its configuration, git commit, command, environment, per-epoch history, logits and summary.
 Splits are hashed (`data/processed/curation_report.json`). Bit-exact replay is not guaranteed (a few CUDA kernels are non-deterministic); seed-to-seed spread is reported.
 
+## Authors
+
+P. Vishnu Vardhan Reddy, V. Guru Puneeth Reddy, D. Greeshmanth Reddy: Dept. of Computer Science and Engineering,
+Amrita Vishwa Vidyapeetham, Bangalore Campus. Repository: https://github.com/pvishnu318/acpolyp. Cite via [CITATION.cff](CITATION.cff).
+
 ## Citation and data credit
 
 Pogorelov et al., *KVASIR: A Multi-Class Image Dataset for Computer Aided Gastrointestinal Disease Detection*, MMSys 2017, doi:10.1145/3083187.3083212 ·

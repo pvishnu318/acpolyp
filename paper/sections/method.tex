@@ -28,9 +28,10 @@ Let $F\in\mathbb{R}^{C\times h\times w}$ be the last feature map of the backbone
 both area-downsampled to $h{\times}w$. With layer normalisation $\mathrm{LN}$,
 \begin{align}
 g &= \mathrm{LN}\!\Big(\tfrac{\sum V F}{\sum V}\Big), \quad
-f_{in} = \mathrm{LN}\!\Big(\tfrac{\sum M F}{\sum M+\epsilon}\Big), \quad
-f_{out} = \mathrm{LN}\!\Big(\tfrac{\sum (V-M)_+ F}{\sum (V-M)_+ +\epsilon}\Big),\\
-e &= \mathrm{GELU}\big(W_2\,\mathrm{GELU}(W_1 s)\big), \qquad z = W\,\mathrm{Dropout}([g;f_{in};f_{out};e]),
+f_{in} = \mathrm{LN}\!\Big(\tfrac{\sum M F}{\sum M+\epsilon}\Big),\\
+f_{out} &= \mathrm{LN}\!\Big(\tfrac{\sum (V-M)_+ F}{\sum (V-M)_+ +\epsilon}\Big),\\
+e &= \mathrm{GELU}\big(W_2\,\mathrm{GELU}(W_1 s)\big),\\
+z &= W\,\mathrm{Dropout}([g;f_{in};f_{out};e]),
 \end{align}
 where $s$ is the standardised contour-feature vector (statistics fit on the training split only, 1/99-percentile winsorised).
 Regions with mass below 0.05 fall back to $g$. Ablation modes remove $[f_{in};f_{out}]$ (\emph{feature-only}), $e$
