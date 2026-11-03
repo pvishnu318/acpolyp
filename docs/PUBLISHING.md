@@ -28,7 +28,7 @@ python scripts/prepublish_check.py
 It must print `OK`. It fails on placeholders, tracked data or weights, files over 20 MB, secrets and uncommitted changes.
 Commit the placeholder edits first.
 
-## 3. GitHub
+## 3. GitHub (done: `main` and tag `v1.0.0` are pushed to https://github.com/pvishnu318/acpolyp)
 
 Create an empty public repository named as in `CITATION.cff` (no README, no licence, so the history pushes cleanly), then:
 
@@ -45,7 +45,7 @@ The local branch is currently called `master`; renaming to `main` matches the de
 ## 4. Zenodo (DOI for the code)
 
 1. Sign in to https://zenodo.org with GitHub and switch the repository on under Account, GitHub.
-2. On GitHub, publish a release from tag `v1.0.0`. Zenodo archives it and reads `.zenodo.json` / `CITATION.cff`.
+2. On GitHub, open Releases, Draft a new release, choose the existing tag `v1.0.0` and publish it (a bare tag does not trigger Zenodo). Zenodo archives it and reads `.zenodo.json` / `CITATION.cff`.
 3. Copy the DOI badge into the top of `README.md` and the DOI into `CITATION.cff`, commit, push.
 
 ## 5. Hugging Face (weights and model card)
@@ -59,7 +59,9 @@ huggingface-cli upload YOUR_USER/acpolyp-v1 outputs/artifacts/acpolyp-v1 .
 ```
 
 Do not paste your token into chat, scripts or the repository; `login` stores it locally.
-Consider making the repository **gated** so users must accept the research-only terms.
+Then, on the model page, open Settings and enable **Gated model** (access requests, manual approval) so every user
+must accept the research-only terms before downloading. Newer `huggingface_hub` versions name the CLI `hf`
+(`hf auth login`, `hf repos create`, `hf upload`); the old `huggingface-cli` name may print a deprecation notice.
 
 ## 6. After publishing
 
